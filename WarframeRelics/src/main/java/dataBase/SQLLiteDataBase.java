@@ -8,10 +8,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.log4j.Logger;
+
 import gui.Util;
 
 public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 
+	private static Logger log = Logger.getLogger(SQLLiteDataBase.class.getName());
+	
 	public static int BRONZE = 0;
 	public static int SILVER = 1;
 	public static int GOLD = 3;
@@ -88,22 +92,23 @@ public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 	public String getNearestItemName(String name) throws RuntimeException {
 		String bestName = name;
 		int bestDistance = Integer.MAX_VALUE;
-			try (ResultSet results = getAllItemNames.executeQuery();) {
-				while (results.next()) {
-					String currentName = results.getString(1);
-					int distance = Util.stringDifference(name, currentName);
-					if (distance == 0) {
-						return currentName;
-					}
-					if (distance < bestDistance) {
-						bestDistance = distance;
-						bestName = currentName;
-					}
+		try (ResultSet results = getAllItemNames.executeQuery();) {
+			while (results.next()) {
+				String currentName = results.getString(1);
+				int distance = Util.stringDifference(name, currentName);
+				if (distance == 0) {
+					log.info("Found Name " + currentName + "in database");
+					return currentName;
 				}
-			} catch (SQLException e) {
-				throw new RuntimeException(e);
+				if (distance < bestDistance) {
+					bestDistance = distance;
+					bestName = currentName;
+				}
 			}
-
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+		log.info("Fixed name " + name + " to " + bestName);
 		return bestName;
 	}
 
@@ -187,13 +192,13 @@ public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 	}
 
 	public void emptyTables() throws SQLException {
-		try (Statement stmt = connection.createStatement()){
+		try (Statement stmt = connection.createStatement()) {
 			stmt.execute(EMPTY_DROPS_TABLE);
 			stmt.execute(EMPTY_ITEMS_TABLE);
 			stmt.execute(EMPTY_RELIC_TABLE);
 		}
 	}
-	
+
 	@Override
 	public void close() throws SQLException {
 		addItemByName.close();
