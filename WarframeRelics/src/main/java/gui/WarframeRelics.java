@@ -43,7 +43,7 @@ public class WarframeRelics {
 	public WarframeRelics() {
 		frame = new Frame();
 		frame.setSize(400, 300);
-		frame.setTitle("Warframe Relics");
+		frame.setTitle("Warframe Relics " + WarframeRelicsMain.version);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -67,7 +67,7 @@ public class WarframeRelics {
 		labels = new Label[4];
 		prices = new PriceDisplayer[4];
 		for (int i = 0; i < 4; i++) {
-			labels[i] = new Label("test");
+			labels[i] = new Label();
 			labels[i].setAlignment(Label.CENTER);
 			mainPanel.add(labels[i]);
 			prices[i] = new PriceDisplayer();
