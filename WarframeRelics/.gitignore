@@ -5,3 +5,5 @@
 relics.jpg
 db.db
 log.txt
+*.lck
+/debug/

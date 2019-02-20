@@ -14,7 +14,7 @@ import java.util.logging.SimpleFormatter;
 import java.util.logging.XMLFormatter;
 
 public class WarframeRelicsMain {
-	public static String version = "1.0.1.0";
+	public static String version = "1.1.0.0";
 
 	public static void main(String args[]) throws SecurityException, IOException {
 

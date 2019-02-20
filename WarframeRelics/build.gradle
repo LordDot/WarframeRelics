@@ -35,7 +35,7 @@ eclipse {
 
 task(runDebug, dependsOn: 'classes', type: JavaExec) {
 	group = 'application'
-    main = 'gui.WarframeRelicsMain'
+    main = 'warframeRelics.gui.WarframeRelicsMain'
     classpath = sourceSets.main.runtimeClasspath
     jvmArgs = ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"]
 }

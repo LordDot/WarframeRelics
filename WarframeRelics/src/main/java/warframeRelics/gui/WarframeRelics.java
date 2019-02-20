@@ -4,10 +4,13 @@ import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Frame;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.Panel;
+import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -16,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JProgressBar;
 import javax.swing.plaf.ProgressBarUI;
 
@@ -31,7 +35,7 @@ import warframeRelics.screenCapture.ScreenBufferedImageProvider;
 
 public class WarframeRelics {
 	private static final Logger log = Logger.getLogger(WarframeRelics.class.getName());
-	
+
 	private Frame frame;
 	private Button readButton;
 	private Label[] labels;
@@ -39,14 +43,16 @@ public class WarframeRelics {
 	private Button updateButton;
 	private JProgressBar progressBar;
 	private Panel mainPanel;
+	private Button debugButton;
 
 	private RelicReader relicReader;
 	private SQLLiteDataBase database;
 	private Pricer pricer;
+	private int debugImageCounter;
 
 	public WarframeRelics() {
 		frame = new Frame();
-		frame.setSize(400, 300);
+		frame.setSize(500, 350);
 		frame.setTitle("Warframe Relics " + WarframeRelicsMain.version);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
@@ -64,9 +70,7 @@ public class WarframeRelics {
 		});
 		frame.setLayout(new BorderLayout());
 
-		mainPanel = new Panel(new GridLayout(5,2));
-
-		
+		mainPanel = new Panel(new GridLayout(6, 2));
 
 		labels = new Label[4];
 		prices = new PriceDisplayer[4];
@@ -89,8 +93,8 @@ public class WarframeRelics {
 							progressBar.setIndeterminate(true);
 							database.emptyTables();
 							DataDownLoader dl = new DataDownLoader(database);
-							 dl.downLoadPartData();
-							 dl.downloadMissionData();
+							dl.downLoadPartData();
+							dl.downloadMissionData();
 						} catch (SQLException e1) {
 							e1.printStackTrace();
 							log.error(e1);
@@ -123,9 +127,9 @@ public class WarframeRelics {
 									labelText += " (v)";
 								}
 								labels[i].setText(labelText);
-								if(rewards[i].equals("Forma Blueprint")) {
+								if (rewards[i].equals("Forma Blueprint")) {
 									prices[i].setPrices(null);
-								}else {
+								} else {
 									prices[i].setPrices(pricer.getPlat(rewards[i]));
 								}
 							}
@@ -146,7 +150,37 @@ public class WarframeRelics {
 			}
 		});
 		mainPanel.add(readButton);
-		
+
+		debugButton = new Button();
+		debugButton.setLabel("Debug info");
+		debugButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						progressBar.setIndeterminate(true);
+						try {
+							File f = new File("./debug/image" + debugImageCounter++ + ".png");
+							f.mkdirs();
+							f.createNewFile();
+							log.info("writing debug image number" + debugImageCounter);
+							ImageIO.write(new Robot().createScreenCapture(new Rectangle(0, 0, 1920, 1080)), "png", f);
+						} catch (IOException e) {
+							e.printStackTrace();
+							log.error(e);
+						} catch (AWTException e) {
+							e.printStackTrace();
+							log.error(e);
+						} finally {
+							progressBar.setIndeterminate(false);
+						}
+					}
+				}).start();
+			}
+		});
+		mainPanel.add(debugButton);
+
 		frame.add(mainPanel, BorderLayout.CENTER);
 
 		progressBar = new JProgressBar();
