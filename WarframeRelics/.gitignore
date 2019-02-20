@@ -4,6 +4,8 @@
 /gradle/
 relics.jpg
 db.db
-log.txt
+log.txt*
 *.lck
 /debug/
+/tessdata/eng.user-words
+image*.png

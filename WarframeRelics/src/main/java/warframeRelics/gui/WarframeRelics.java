@@ -16,8 +16,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JProgressBar;
@@ -86,26 +89,39 @@ public class WarframeRelics {
 		updateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
+				new Thread(() -> {
 						try {
 							progressBar.setIndeterminate(true);
 							database.emptyTables();
 							DataDownLoader dl = new DataDownLoader(database);
-							dl.downLoadPartData();
+							Set<String> wordList = dl.downLoadPartData();
+							File f = new File("tessdata/eng.user-words");
+							if (f.exists()) {
+								f.delete();
+							}
+							f.createNewFile();
+							try (FileWriter out = new FileWriter(f);) {
+								for (String s : wordList) {
+									out.append(s);
+									out.append("\n");
+								}
+							}
 							dl.downloadMissionData();
+							relicReader = new RelicReader(database, new ScreenBufferedImageProvider());
 						} catch (SQLException e1) {
 							e1.printStackTrace();
 							log.error(e1);
-						} catch (IOException e) {
-							e.printStackTrace();
-							log.error(e);
+						} catch (IOException e2) {
+							e2.printStackTrace();
+							log.error(e2);
+						} catch (AWTException e3) {
+							e3.printStackTrace();
+							log.error(e3);
 						} finally {
 							progressBar.setIndeterminate(false);
 						}
 					}
-				}).start();
+				).start();
 			}
 		});
 		mainPanel.add(updateButton);

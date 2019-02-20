@@ -4,6 +4,8 @@ import java.awt.AWTException;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -30,6 +32,10 @@ public class RelicReader {
 
 		tess = new Tesseract();
 		tess.setDatapath("tessdata");
+		List<String> l = new ArrayList<>();
+		l.add("bazaar");
+		tess.setConfigs(l);
+		tess.setTessVariable("tessedit_char_whitelist", "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	}
 
 	public String[] readRelics() throws Exception {

@@ -7,7 +7,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -28,7 +30,7 @@ public class DataDownLoader {
 		this.database = database;
 	}
 
-	public void downLoadPartData() throws IOException, SQLException {
+	public Set<String> downLoadPartData() throws IOException, SQLException {
 		URLConnection url = new URL(RELIC_URL).openConnection();
 		url.addRequestProperty("User-Agent",
 				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
@@ -41,17 +43,20 @@ public class DataDownLoader {
 			builder.append(line);
 		}
 
+		Set<String> ret = new HashSet<>();
+		
 		JsonParser parser = new JsonParser();
 		JsonArray list = parser.parse(builder.toString()).getAsJsonObject().get("relics").getAsJsonArray();
 		for (Iterator<JsonElement> i = list.iterator(); i.hasNext();) {
 			JsonObject relic = (JsonObject) i.next();
 			if (relic.get("state").getAsString().equals("Intact")) {
-				addRelic(relic);
+				addRelic(relic, ret);
 			}
 		}
+		return ret;
 	}
 
-	private void addRelic(JsonObject relic) throws IOException, SQLException {
+	private void addRelic(JsonObject relic, Set<String> wordList) throws IOException, SQLException {
 		String tierName = relic.get("tier").getAsString();
 		int tier = Util.convertFissureNameToInt(tierName);
 
@@ -60,6 +65,7 @@ public class DataDownLoader {
 
 		System.out.println(tierName + " " + relicName);
 
+		
 		JsonArray rewards = relic.get("rewards").getAsJsonArray();
 		for (Iterator<JsonElement> i = rewards.iterator(); i.hasNext();) {
 			JsonObject reward = i.next().getAsJsonObject();
@@ -69,7 +75,11 @@ public class DataDownLoader {
 			} catch (SQLException e) {
 
 			}
-
+			String[] words = itemName.split(" ");
+			for(int j = 0; j < words.length;j++) {
+				wordList.add(words[j]);
+			}
+			
 			int rarity;
 			double dropChance = reward.get("chance").getAsDouble();
 			if (dropChance == 25.33) {
