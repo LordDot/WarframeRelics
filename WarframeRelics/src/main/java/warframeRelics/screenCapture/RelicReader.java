@@ -6,8 +6,7 @@ import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.log4j.Logger;
+import java.util.logging.Logger;
 
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
@@ -32,19 +31,20 @@ public class RelicReader {
 
 		tess = new Tesseract();
 		tess.setDatapath("tessdata");
-		List<String> l = new ArrayList<>();
-		l.add("bazaar");
-		tess.setConfigs(l);
 		tess.setTessVariable("tessedit_char_whitelist", "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+		tess.setTessVariable("load_system_dawg", "F");
+		tess.setTessVariable("load_freq_dawg", "F");
+		tess.setTessVariable("user_words_suffix", "user-words");
 	}
 
 	public String[] readRelics() throws Exception {
 		//TODO Prime is always in first line
 		BufferedImage[] images = imageExtractor.extractRelics(bip.getImage());
 		String[] ret = new String[images.length];
-		log.info("read " + ret[0] + ", " + ret[1] + ", " + ret[2] + ", " + ret[3]);
 		for (int i = 0; i < images.length; i++) {
-			String[] split = tess.doOCR(images[i]).split("\n");
+			String read = tess.doOCR(images[i]);
+			log.info("read " + read);
+			String[] split = read .split("\n");
 			if (Util.stringDifference(split[split.length - 1], "BLUEPRINT") < 3) {
 				ret[i] = split[split.length - 2] + split[split.length - 1];
 			} else {

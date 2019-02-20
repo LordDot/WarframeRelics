@@ -35,7 +35,7 @@ eclipse {
 
 task(runDebug, dependsOn: 'classes', type: JavaExec) {
 	group = 'application'
-    main = 'warframeRelics.gui.WarframeRelicsMain'
+    main = 'warframeRelics.gui.WarframeRelics'
     classpath = sourceSets.main.runtimeClasspath
     jvmArgs = ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"]
 }
@@ -56,4 +56,4 @@ dependencies {
     
     //testCompile group: 'junit', name: 'junit', version: '4.11'
 }
-mainClassName = 'warframeRelics.gui.WarframeRelicsMain'
+mainClassName = 'warframeRelics.gui.WarframeRelics'

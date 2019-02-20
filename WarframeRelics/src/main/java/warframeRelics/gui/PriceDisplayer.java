@@ -1,46 +1,60 @@
 package warframeRelics.gui;
 
-import java.awt.GridLayout;
-import java.awt.Label;
-import java.awt.Panel;
-
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import warframeRelics.pricing.Pricer;
 
-public class PriceDisplayer extends Panel{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1370426689489086638L;
-	private Label[] labels;
-	
+public class PriceDisplayer extends GridPane {
+	private Label[][] labels;
+
 	public PriceDisplayer() {
-		super(new GridLayout(2, 3));
-		labels = new Label[6];
-		for(int i = 0; i < 6; i++) {
-			labels[i] = new Label();
-			add(labels[i]);
+		labels = new Label[2][3];
+		
+		ColumnConstraints c = new ColumnConstraints();
+		c.setPercentWidth(50);
+		
+		for (int i = 0; i < labels[0].length; i++) {
+			getColumnConstraints().add(c);
+		}
+		RowConstraints r = new RowConstraints();
+		r.setPercentHeight(50);
+		for (int i = 0; i < 2; i++) {
+			getRowConstraints().add(r);
+		}
+		for (int i = 0; i < labels.length; i++) {
+			for (int j = 0; j < 3; j++) {
+				labels[i][j] = new Label();
+				labels[i][j].setAlignment(Pos.CENTER);
+				add(Util.stretch(labels[i][j]), j, i);
+			}
 		}
 	}
-	
+
 	public void setPrices(Pricer.Price p) {
-		if(p == null) {
-			for(int i = 0; i < labels.length; i++) {
-				labels[i].setText("");
+		if (p == null) {
+			for (int i = 0; i < labels.length; i++) {
+				for (int j = 0; j < labels[0].length; j++) {
+					labels[i][j].setText("");
+				}
 			}
 			return;
 		}
-		setPrice(labels[0], p.getIngameBuy());
-		setPrice(labels[1], p.getOnlineBuy());
-		setPrice(labels[2], p.getOfflineBuy());
-		setPrice(labels[3], p.getIngameSell());
-		setPrice(labels[4], p.getOnlineSell());
-		setPrice(labels[5], p.getOfflineSell());
+		setPrice(labels[0][0], p.getIngameBuy());
+		setPrice(labels[0][1], p.getOnlineBuy());
+		setPrice(labels[0][2], p.getOfflineBuy());
+		setPrice(labels[1][0], p.getIngameSell());
+		setPrice(labels[1][1], p.getOnlineSell());
+		setPrice(labels[1][2], p.getOfflineSell());
 	}
-	
+
 	private void setPrice(Label label, int value) {
-		if(value == 0 || value == Integer.MAX_VALUE) {
+		if (value == 0 || value == Integer.MAX_VALUE) {
 			label.setText("");
-		}else {
+		} else {
 			label.setText("" + value);
 		}
 	}
