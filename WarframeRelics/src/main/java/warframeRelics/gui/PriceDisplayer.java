@@ -29,11 +29,19 @@ public class PriceDisplayer extends Panel{
 			}
 			return;
 		}
-		labels[0].setText("" + p.getIngameBuy());
-		labels[1].setText("" + p.getOnlineBuy());
-		labels[2].setText("" + p.getOfflineBuy());
-		labels[3].setText("" + p.getIngameSell());
-		labels[4].setText("" + p.getOnlineSell());
-		labels[5].setText("" + p.getOfflineSell());
+		setPrice(labels[0], p.getIngameBuy());
+		setPrice(labels[1], p.getOnlineBuy());
+		setPrice(labels[2], p.getOfflineBuy());
+		setPrice(labels[3], p.getIngameSell());
+		setPrice(labels[4], p.getOnlineSell());
+		setPrice(labels[5], p.getOfflineSell());
+	}
+	
+	private void setPrice(Label label, int value) {
+		if(value == 0 || value == Integer.MAX_VALUE) {
+			label.setText("");
+		}else {
+			label.setText("" + value);
+		}
 	}
 }
