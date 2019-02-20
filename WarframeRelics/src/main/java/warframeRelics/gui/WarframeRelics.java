@@ -19,6 +19,8 @@ import java.sql.SQLException;
 import javax.swing.JProgressBar;
 import javax.swing.plaf.ProgressBarUI;
 
+import org.apache.log4j.Logger;
+
 import net.sourceforge.tess4j.TesseractException;
 import warframeRelics.dataBase.SQLLiteDataBase;
 import warframeRelics.dataDownload.DataDownLoader;
@@ -28,6 +30,8 @@ import warframeRelics.screenCapture.RelicReader;
 import warframeRelics.screenCapture.ScreenBufferedImageProvider;
 
 public class WarframeRelics {
+	private static final Logger log = Logger.getLogger(WarframeRelics.class.getName());
+	
 	private Frame frame;
 	private Button readButton;
 	private Label[] labels;
@@ -52,8 +56,8 @@ public class WarframeRelics {
 					try {
 						database.close();
 					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
+						log.error(e1);
 					}
 				}
 			}
@@ -89,9 +93,10 @@ public class WarframeRelics {
 							 dl.downloadMissionData();
 						} catch (SQLException e1) {
 							e1.printStackTrace();
+							log.error(e1);
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
+							log.error(e);
 						} finally {
 							progressBar.setIndeterminate(false);
 						}
@@ -125,14 +130,14 @@ public class WarframeRelics {
 								}
 							}
 						} catch (TesseractException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
+							log.error(e1);
 						} catch (SQLException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
+							log.error(e1);
 						} catch (Exception e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
+							log.error(e);
 						} finally {
 							progressBar.setIndeterminate(false);
 						}
@@ -153,13 +158,14 @@ public class WarframeRelics {
 			database = new SQLLiteDataBase("./db.db");
 		} catch (SQLException e) {
 			e.printStackTrace();
+			log.error(e);
 		}
 
 		try {
 			relicReader = new RelicReader(database, new ScreenBufferedImageProvider());
 		} catch (AWTException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			log.error(e1);
 		}
 		pricer = new WarframeMarket();
 	}
