@@ -18,8 +18,7 @@ public class RelicReader {
 	private ITesseract tess;
 	private INameFixer dataBase;
 
-	public RelicReader(INameFixer dataBase, BufferedImageProvider bip) throws AWTException {
-		this.dataBase = dataBase;
+	public RelicReader(BufferedImageProvider bip) throws AWTException {
 		this.bip = bip;
 		imageExtractor = new ImageExtractor();
 
@@ -31,6 +30,10 @@ public class RelicReader {
 		tess.setTessVariable("user_words_suffix", "user-words");
 	}
 
+	public void setnameFixer(INameFixer nameFixer) {
+		dataBase = nameFixer;
+	}
+	
 	public String[] readRelics() throws Exception {
 		// TODO Prime is always in first line
 		BufferedImage[] images = imageExtractor.extractRelics(bip.getImage());
