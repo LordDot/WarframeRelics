@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import warframeRelics.dataBase.SQLLiteDataBase;
 
 public class WarframeRelics extends Application{
-	public static String VERSION = "1.1.4.1";
+	public static String VERSION = "1.1.4.3";
 
 	private static final Logger log = Logger.getLogger(WarframeRelics.class.getName());
 

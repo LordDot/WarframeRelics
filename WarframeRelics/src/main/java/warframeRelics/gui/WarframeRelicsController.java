@@ -86,6 +86,7 @@ public class WarframeRelicsController implements Initializable{
 				if (f.exists()) {
 					f.delete();
 				}
+				f.getParentFile().mkdirs();
 				f.createNewFile();
 				try (FileWriter out = new FileWriter(f);) {
 					for (String s : wordList) {
