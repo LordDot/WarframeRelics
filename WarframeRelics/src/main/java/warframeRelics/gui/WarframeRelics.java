@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -19,23 +18,14 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import net.sourceforge.tess4j.TesseractException;
 import warframeRelics.dataBase.SQLLiteDataBase;
@@ -49,8 +39,6 @@ public class WarframeRelics extends Application {
 	public static String VERSION = "1.1.4.0";
 
 	private static final Logger log = Logger.getLogger(WarframeRelics.class.getName());
-
-	private Stage stage;
 
 	private Scene mainScene;
 	private BorderPane borderPane;
@@ -70,7 +58,6 @@ public class WarframeRelics extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		this.stage = stage;
 		stage.setTitle("Warframe Relics " + VERSION);
 		stage.setOnCloseRequest(e -> {
 			if (database != null) {

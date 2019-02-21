@@ -1,20 +1,11 @@
 package warframeRelics.screenCapture;
 
 import java.awt.AWTException;
-import java.awt.Rectangle;
-import java.awt.Robot;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
-
-import javax.imageio.ImageIO;
 
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
-import net.sourceforge.tess4j.TesseractException;
-import warframeRelics.dataBase.IDataBase;
 import warframeRelics.dataBase.INameFixer;
 import warframeRelics.gui.Util;
 

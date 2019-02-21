@@ -1,16 +1,11 @@
 package warframeRelics.pricing;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
-
-import org.omg.PortableInterceptor.IORInterceptor_3_0Holder;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
