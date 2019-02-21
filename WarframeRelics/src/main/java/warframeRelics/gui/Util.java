@@ -11,23 +11,28 @@ public class Util {
 	public static int stringDifference(String first, String second) {
 		first = first.trim();
 		second = second.trim();
-		String shorter;
-		String longer;
-		if (first.length() < second.length()) {
-			shorter = first.toLowerCase();
-			longer = second.toLowerCase();
-		} else {
-			shorter = second.toLowerCase();
-			longer = first.toLowerCase();
+		
+		int[][] distances = new int[first.length() + 1][second.length() + 1];
+		for(int i = 1; i < distances.length; i++) {
+			distances[i][0] = i;
 		}
-
-		int diff = longer.length() - shorter.length();
-		for (int i = 0; i < shorter.length(); i++) {
-			if (shorter.charAt(i) != longer.charAt(i)) {
-				diff++;
+		
+		for(int i = 1; i < distances[0].length; i++) {
+			distances[0][i] = i;
+		}
+		
+		char[] firstString = first.toCharArray();
+		char[] secondString = second.toCharArray();
+		for(int j = 1; j < distances[0].length; j++) {
+			for(int i = 1; i < distances.length; i++) {
+				int cost = 0;
+				if(firstString[i-1] != secondString[j-1]) {
+					cost = 1;
+				}
+				distances[i][j] = Math.min(distances[i-1][j] + 1, Math.min(distances[i][j-1] + 1, distances[i-1][j-1]+cost));
 			}
 		}
-		return diff;
+		return distances[first.length()][second.length()];
 	}
 	
 	public static int convertFissureNameToInt(String tierName) throws IOException {

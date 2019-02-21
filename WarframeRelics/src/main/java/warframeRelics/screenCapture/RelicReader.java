@@ -4,9 +4,12 @@ import java.awt.AWTException;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
 
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
@@ -18,7 +21,7 @@ import warframeRelics.gui.Util;
 public class RelicReader {
 
 	private static final Logger log = Logger.getLogger(RelicReader.class.getName());
-	
+
 	private ImageExtractor imageExtractor;
 	private BufferedImageProvider bip;
 	private ITesseract tess;
@@ -38,13 +41,29 @@ public class RelicReader {
 	}
 
 	public String[] readRelics() throws Exception {
-		//TODO Prime is always in first line
+		// TODO Prime is always in first line
 		BufferedImage[] images = imageExtractor.extractRelics(bip.getImage());
+
+		for (int i = 0; i < images.length; i++) {
+			for (int j = 0; j < images[i].getHeight(); j++) {
+				for (int k = 0; k < images[i].getWidth(); k++) {
+					int color = images[i].getRGB(k, j);
+					int r = (color & (255 << 16)) >> 16;
+					int g = (color & (255 << 8)) >> 8;
+					int b = color & 255;
+					int average = r + g +b /3;
+					if(average < 160) {
+						images[i].setRGB(k, j, 255 << 24);
+					}
+				}
+			}
+		}
+
 		String[] ret = new String[images.length];
 		for (int i = 0; i < images.length; i++) {
 			String read = tess.doOCR(images[i]);
 			log.info("read " + read);
-			String[] split = read .split("\n");
+			String[] split = read.split("\n");
 			if (Util.stringDifference(split[split.length - 1], "BLUEPRINT") < 3) {
 				ret[i] = split[split.length - 2] + split[split.length - 1];
 			} else {

@@ -94,7 +94,7 @@ public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 		try (ResultSet results = getAllItemNames.executeQuery();) {
 			while (results.next()) {
 				String currentName = results.getString(1);
-				int distance = Util.stringDifference(name, currentName);
+				int distance = Util.stringDifference(name.toLowerCase(), currentName.toLowerCase());
 				if (distance == 0) {
 					log.info("Found Name " + currentName + "in database");
 					return currentName;

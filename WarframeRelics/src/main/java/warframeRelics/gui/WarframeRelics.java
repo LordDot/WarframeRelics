@@ -46,7 +46,7 @@ import warframeRelics.screenCapture.RelicReader;
 import warframeRelics.screenCapture.ScreenBufferedImageProvider;
 
 public class WarframeRelics extends Application {
-	public static String VERSION = "1.1.3.0";
+	public static String VERSION = "1.1.4.0";
 
 	private static final Logger log = Logger.getLogger(WarframeRelics.class.getName());
 
