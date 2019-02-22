@@ -1,53 +1,75 @@
 package warframeRelics.gui;
 
+import java.io.IOException;
+
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import warframeRelics.pricing.Pricer;
+import warframeRelics.pricing.Pricer.Price;
 
 public class PriceDisplayer extends GridPane {
-	private Label[][] labels;
-
+	private Property<Price> priceProperty;
+	
+	@FXML
+	private Label ingameBuy;
+	@FXML
+	private Label onlineBuy;
+	@FXML
+	private Label offlineBuy;
+	@FXML
+	private Label ingameSell;
+	@FXML
+	private Label onlineSell;
+	@FXML
+	private Label offlineSell;
+	
 	public PriceDisplayer() {
-		labels = new Label[2][3];
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("PriceDisplayer.fxml"));
+		fxmlLoader.setRoot(this);
+		fxmlLoader.setController(this);
 		
-		ColumnConstraints c = new ColumnConstraints();
-		c.setPercentWidth(50);
-		
-		for (int i = 0; i < labels[0].length; i++) {
-			getColumnConstraints().add(c);
+		try {
+			fxmlLoader.load();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
-		RowConstraints r = new RowConstraints();
-		r.setPercentHeight(50);
-		for (int i = 0; i < 2; i++) {
-			getRowConstraints().add(r);
-		}
-		for (int i = 0; i < labels.length; i++) {
-			for (int j = 0; j < 3; j++) {
-				labels[i][j] = new Label();
-				labels[i][j].setAlignment(Pos.CENTER);
-				add(Util.stretch(labels[i][j]), j, i);
+
+		priceProperty = new SimpleObjectProperty<>();
+		priceProperty.addListener(new ChangeListener<Price>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Price> observable, Price oldValue, Price newValue) {
+				setPrice(ingameBuy,newValue.getIngameBuy());
+				setPrice(onlineBuy,newValue.getOnlineBuy());
+				setPrice(offlineBuy,newValue.getOfflineBuy());
+				setPrice(ingameSell,newValue.getIngameSell());
+				setPrice(onlineSell,newValue.getOnlineSell());
+				setPrice(offlineSell, newValue.getOfflineSell());
 			}
-		}
+		});
 	}
 
-	public void setPrices(Pricer.Price p) {
-		if (p == null) {
-			for (int i = 0; i < labels.length; i++) {
-				for (int j = 0; j < labels[0].length; j++) {
-					labels[i][j].setText("");
-				}
-			}
-			return;
-		}
-		setPrice(labels[0][0], p.getIngameBuy());
-		setPrice(labels[0][1], p.getOnlineBuy());
-		setPrice(labels[0][2], p.getOfflineBuy());
-		setPrice(labels[1][0], p.getIngameSell());
-		setPrice(labels[1][1], p.getOnlineSell());
-		setPrice(labels[1][2], p.getOfflineSell());
+	public void setPrice(Pricer.Price p) {
+		priceProperty.setValue(p);
+	}
+	
+	public Price getPrice() {
+		return priceProperty.getValue();
+	}
+	
+	public Property<Price> pricePoperty(){
+		return priceProperty;
 	}
 
 	private void setPrice(Label label, int value) {

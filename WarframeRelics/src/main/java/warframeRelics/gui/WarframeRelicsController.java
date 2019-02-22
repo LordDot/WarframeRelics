@@ -127,7 +127,7 @@ public class WarframeRelicsController implements Initializable{
 					} else {
 						p = pricer.getPlat(rewards[i]);
 					}
-					Platform.runLater(() -> prices[index.intValue()].setPrices(p));
+					Platform.runLater(() -> prices[index.intValue()].setPrice(p));
 				}
 			} catch (TesseractException e1) {
 				e1.printStackTrace();
