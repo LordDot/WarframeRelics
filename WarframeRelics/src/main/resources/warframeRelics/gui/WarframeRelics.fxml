@@ -5,14 +5,15 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.ChoiceBox?>
 
-<AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="warframeRelics.gui.WarframeRelicsController">
+<AnchorPane prefHeight="350.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="warframeRelics.gui.WarframeRelicsController">
    <children>
       <BorderPane layoutX="23.0" layoutY="25.0" prefHeight="300.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <bottom>
             <AnchorPane BorderPane.alignment="CENTER">
                <children>
-                  <ProgressBar layoutX="91.0" layoutY="134.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" fx:id="progressBar" />
+                  <ProgressBar fx:id="progressBar" layoutX="91.0" layoutY="134.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
          </bottom>
@@ -36,7 +37,7 @@
                <children>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="5">
                      <children>
-                        <Button onAction="#readRewards" layoutX="135.0" layoutY="9.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="390.0" text="Read Rewards" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <Button layoutX="135.0" layoutY="9.0" mnemonicParsing="false" onAction="#readRewards" prefHeight="42.0" prefWidth="390.0" text="Read Rewards" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children>
                   </AnchorPane>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="4">
@@ -46,12 +47,19 @@
                   </AnchorPane>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                      <children>
-                        <Button onAction="#takeScreenshot" layoutX="44.0" layoutY="9.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="192.0" text="Take Screenshot" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <Button layoutX="44.0" layoutY="9.0" mnemonicParsing="false" onAction="#takeScreenshot" prefHeight="42.0" prefWidth="192.0" text="Take Screenshot" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children>
                   </AnchorPane>
                </children>
             </GridPane>
          </center>
+         <top>
+            <AnchorPane BorderPane.alignment="CENTER">
+               <children>
+                  <ChoiceBox fx:id="resolutionComboBox" onAction="#setResolution" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
+         </top>
       </BorderPane>
    </children>
 </AnchorPane>

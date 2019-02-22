@@ -20,7 +20,7 @@ import warframeRelics.pricing.Pricer.Price;
 
 public class PriceDisplayer extends GridPane {
 	private Property<Price> priceProperty;
-	
+
 	@FXML
 	private Label ingameBuy;
 	@FXML
@@ -33,12 +33,12 @@ public class PriceDisplayer extends GridPane {
 	private Label onlineSell;
 	@FXML
 	private Label offlineSell;
-	
+
 	public PriceDisplayer() {
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("PriceDisplayer.fxml"));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
-		
+
 		try {
 			fxmlLoader.load();
 		} catch (IOException e) {
@@ -50,12 +50,21 @@ public class PriceDisplayer extends GridPane {
 
 			@Override
 			public void changed(ObservableValue<? extends Price> observable, Price oldValue, Price newValue) {
-				setPrice(ingameBuy,newValue.getIngameBuy());
-				setPrice(onlineBuy,newValue.getOnlineBuy());
-				setPrice(offlineBuy,newValue.getOfflineBuy());
-				setPrice(ingameSell,newValue.getIngameSell());
-				setPrice(onlineSell,newValue.getOnlineSell());
-				setPrice(offlineSell, newValue.getOfflineSell());
+				if (newValue == null) {
+					ingameBuy.setText("");
+					onlineBuy.setText("");
+					offlineBuy.setText("");
+					ingameSell.setText("");
+					onlineSell.setText("");
+					offlineSell.setText("");
+				} else {
+					setPrice(ingameBuy, newValue.getIngameBuy());
+					setPrice(onlineBuy, newValue.getOnlineBuy());
+					setPrice(offlineBuy, newValue.getOfflineBuy());
+					setPrice(ingameSell, newValue.getIngameSell());
+					setPrice(onlineSell, newValue.getOnlineSell());
+					setPrice(offlineSell, newValue.getOfflineSell());
+				}
 			}
 		});
 	}
@@ -63,12 +72,12 @@ public class PriceDisplayer extends GridPane {
 	public void setPrice(Pricer.Price p) {
 		priceProperty.setValue(p);
 	}
-	
+
 	public Price getPrice() {
 		return priceProperty.getValue();
 	}
-	
-	public Property<Price> pricePoperty(){
+
+	public Property<Price> pricePoperty() {
 		return priceProperty;
 	}
 

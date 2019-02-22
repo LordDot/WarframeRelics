@@ -12,11 +12,13 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 import warframeRelics.dataBase.SQLLiteDataBase;
 import warframeRelics.screenCapture.BufferedImageProvider;
 import warframeRelics.screenCapture.RelicReader;
+import warframeRelics.screenCapture.ScreenResolution;
 
 public class ImageTest {
 
@@ -43,10 +45,10 @@ public class ImageTest {
 	private void test(int players, String prefix, InputStream data) throws Exception {
 		Map<String, String[]> images = getData(players, data);
 		ImageProvider p = new ImageProvider(prefix);
-		RelicReader r = new RelicReader(p);
 		try (SQLLiteDataBase db = new SQLLiteDataBase("db.db");) {
-			r.setnameFixer(db);
+			RelicReader r = new RelicReader(db, p, ScreenResolution.S1920x1080);
 			for (String image : images.keySet()) {
+				System.out.println(image);
 				p.setPath(image);
 				String[] readNames = r.readRelics();
 				assertArrayEquals("At " + image, images.get(image), readNames);

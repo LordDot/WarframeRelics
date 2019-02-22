@@ -4,8 +4,10 @@ import java.awt.AWTException;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -18,48 +20,59 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.GridPane;
+import javafx.util.StringConverter;
 import net.sourceforge.tess4j.TesseractException;
 import warframeRelics.dataBase.SQLLiteDataBase;
 import warframeRelics.dataDownload.DataDownLoader;
 import warframeRelics.pricing.Pricer;
 import warframeRelics.pricing.WarframeMarket;
+import warframeRelics.screenCapture.BufferedImageProvider;
+import warframeRelics.screenCapture.FileImageProvider;
 import warframeRelics.screenCapture.RelicReader;
 import warframeRelics.screenCapture.ScreenBufferedImageProvider;
+import warframeRelics.screenCapture.ScreenResolution;
 
-public class WarframeRelicsController implements Initializable{
+public class WarframeRelicsController implements Initializable {
 	private static final Logger log = Logger.getLogger(WarframeRelicsController.class.getName());
-	
+
 	private RelicReader relicReader;
 	private SQLLiteDataBase database;
 	private Pricer pricer;
 	private int debugImageCounter;
-	
+
 	@FXML
 	private GridPane table;
 	@FXML
 	private ProgressBar progressBar;
-
+	@FXML
+	private ChoiceBox<ScreenResolution> resolutionComboBox;
+	private ScreenResolution resolution;
+	
 	private Label[] labels;
 	private PriceDisplayer[] prices;
-	
-	public WarframeRelicsController() {
+
+	public WarframeRelicsController(SQLLiteDataBase dataBase, String fromFile) {
+		
 		try {
-			relicReader = new RelicReader(new ScreenBufferedImageProvider());
-		} catch (AWTException e1) {
+			this.database = dataBase;
+			BufferedImageProvider prov;
+			if(fromFile==null){
+				prov = new ScreenBufferedImageProvider();
+			}else {
+				prov = new FileImageProvider(new FileInputStream(fromFile));
+			}
+			relicReader = new RelicReader(dataBase, prov, ScreenResolution.S1920x1080);
+		} catch (AWTException | IOException e1) {
 			e1.printStackTrace();
 			log.severe(e1.toString());
 		}
 		pricer = new WarframeMarket();
 	}
-	
-	public void setDataBase(SQLLiteDataBase database) {
-		this.database = database;
-		relicReader.setnameFixer(database);
-	}
-	
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		labels = new Label[4];
@@ -72,7 +85,30 @@ public class WarframeRelicsController implements Initializable{
 			prices[i] = new PriceDisplayer();
 			table.add(Util.stretch(prices[i]), 1, i);
 		}
+		
+		resolutionComboBox.getItems().addAll(ScreenResolution.values());
+		resolutionComboBox.setConverter(new StringConverter<ScreenResolution>() {
+			
+			@Override
+			public String toString(ScreenResolution object) {
+				return object.name().substring(1);
+			}
+			
+			@Override
+			public ScreenResolution fromString(String string) {
+				return ScreenResolution.valueOf("S" + string);
+			}
+		});
+		resolutionComboBox.setValue(ScreenResolution.S1920x1080);
+	}
 
+	public void setResolution() {
+		resolution = resolutionComboBox.getValue();
+		try {
+			relicReader.setResolution(resolution);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void update() {
@@ -112,14 +148,15 @@ public class WarframeRelicsController implements Initializable{
 			Platform.runLater(() -> progressBar.setProgress(-1.0));
 			try {
 				String[] rewards = relicReader.readRelics();
-				for (int i = 0; i < 4; i++) {
+				int i;
+				for (i= 0; i < rewards.length; i++) {
 					String labelText = rewards[i];
 					if (database.getItemVaulted(rewards[i])) {
 						labelText += " (v)";
 					}
-					Integer index = new Integer(i);
+					int index = i;
 					final String text = labelText;
-					Platform.runLater(() -> labels[index.intValue()].setText(text));
+					Platform.runLater(() -> labels[index].setText(text));
 
 					final Pricer.Price p;
 					if (rewards[i].equals("Forma Blueprint")) {
@@ -127,7 +164,12 @@ public class WarframeRelicsController implements Initializable{
 					} else {
 						p = pricer.getPlat(rewards[i]);
 					}
-					Platform.runLater(() -> prices[index.intValue()].setPrice(p));
+					Platform.runLater(() -> prices[index].setPrice(p));
+				}
+				for(; i < 4;i++) {
+					int index = i;
+					Platform.runLater(() -> labels[index].setText(""));
+					Platform.runLater(() -> prices[index].setPrice(null));
 				}
 			} catch (TesseractException e1) {
 				e1.printStackTrace();
@@ -152,7 +194,7 @@ public class WarframeRelicsController implements Initializable{
 				f.mkdirs();
 				f.createNewFile();
 				log.info("writing debug image number" + debugImageCounter);
-				ImageIO.write(new Robot().createScreenCapture(new Rectangle(0, 0, 1920, 1080)), "png", f);
+				ImageIO.write(new Robot().createScreenCapture(new Rectangle(0, 0, resolution.getWidth(), resolution.getHeight())), "png", f);
 			} catch (IOException e) {
 				e.printStackTrace();
 				log.severe(e.toString());

@@ -2,6 +2,7 @@ package warframeRelics.screenCapture;
 
 import java.awt.AWTException;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.logging.Logger;
 
 import net.sourceforge.tess4j.ITesseract;
@@ -18,9 +19,10 @@ public class RelicReader {
 	private ITesseract tess;
 	private INameFixer dataBase;
 
-	public RelicReader(BufferedImageProvider bip) throws AWTException {
+	public RelicReader(INameFixer nameFixer, BufferedImageProvider bip, ScreenResolution resolution) throws AWTException, IOException {
 		this.bip = bip;
-		imageExtractor = new ImageExtractor();
+		this.dataBase = nameFixer;
+		imageExtractor = new ImageExtractor(resolution);
 
 		tess = new Tesseract();
 		tess.setDatapath("tessdata");
@@ -29,10 +31,11 @@ public class RelicReader {
 		tess.setTessVariable("load_freq_dawg", "F");
 		tess.setTessVariable("user_words_suffix", "user-words");
 	}
-
-	public void setnameFixer(INameFixer nameFixer) {
-		dataBase = nameFixer;
+	
+	public void setResolution(ScreenResolution resolution) throws IOException {
+		imageExtractor.setResolution(resolution);
 	}
+
 	
 	public String[] readRelics() throws Exception {
 		// TODO Prime is always in first line
