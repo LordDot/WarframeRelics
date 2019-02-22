@@ -47,6 +47,7 @@ public class ImageTest {
 		try (SQLLiteDataBase db = new SQLLiteDataBase("db.db");) {
 			r.setnameFixer(db);
 			for (String image : images.keySet()) {
+				System.out.println(image);
 				p.setPath(image);
 				String[] readNames = r.readRelics();
 				assertArrayEquals("At " + image, images.get(image), readNames);

@@ -29,14 +29,14 @@ import warframeRelics.pricing.WarframeMarket;
 import warframeRelics.screenCapture.RelicReader;
 import warframeRelics.screenCapture.ScreenBufferedImageProvider;
 
-public class WarframeRelicsController implements Initializable{
+public class WarframeRelicsController implements Initializable {
 	private static final Logger log = Logger.getLogger(WarframeRelicsController.class.getName());
-	
+
 	private RelicReader relicReader;
 	private SQLLiteDataBase database;
 	private Pricer pricer;
 	private int debugImageCounter;
-	
+
 	@FXML
 	private GridPane table;
 	@FXML
@@ -44,22 +44,22 @@ public class WarframeRelicsController implements Initializable{
 
 	private Label[] labels;
 	private PriceDisplayer[] prices;
-	
+
 	public WarframeRelicsController() {
 		try {
 			relicReader = new RelicReader(new ScreenBufferedImageProvider());
-		} catch (AWTException e1) {
+		} catch (AWTException | IOException e1) {
 			e1.printStackTrace();
 			log.severe(e1.toString());
 		}
 		pricer = new WarframeMarket();
 	}
-	
+
 	public void setDataBase(SQLLiteDataBase database) {
 		this.database = database;
 		relicReader.setnameFixer(database);
 	}
-	
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		labels = new Label[4];
@@ -74,7 +74,7 @@ public class WarframeRelicsController implements Initializable{
 		}
 
 	}
-	
+
 	public void update() {
 		new Thread(() -> {
 			try {
@@ -112,14 +112,15 @@ public class WarframeRelicsController implements Initializable{
 			Platform.runLater(() -> progressBar.setProgress(-1.0));
 			try {
 				String[] rewards = relicReader.readRelics();
-				for (int i = 0; i < 4; i++) {
+				int i;
+				for (i= 0; i < rewards.length; i++) {
 					String labelText = rewards[i];
 					if (database.getItemVaulted(rewards[i])) {
 						labelText += " (v)";
 					}
-					Integer index = new Integer(i);
+					int index = i;
 					final String text = labelText;
-					Platform.runLater(() -> labels[index.intValue()].setText(text));
+					Platform.runLater(() -> labels[index].setText(text));
 
 					final Pricer.Price p;
 					if (rewards[i].equals("Forma Blueprint")) {
@@ -127,7 +128,12 @@ public class WarframeRelicsController implements Initializable{
 					} else {
 						p = pricer.getPlat(rewards[i]);
 					}
-					Platform.runLater(() -> prices[index.intValue()].setPrice(p));
+					Platform.runLater(() -> prices[index].setPrice(p));
+				}
+				for(; i < 4;i++) {
+					int index = i;
+					Platform.runLater(() -> labels[index].setText(""));
+					Platform.runLater(() -> prices[index].setPrice(null));
 				}
 			} catch (TesseractException e1) {
 				e1.printStackTrace();

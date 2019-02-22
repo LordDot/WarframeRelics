@@ -2,6 +2,7 @@ package warframeRelics.screenCapture;
 
 import java.awt.AWTException;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.logging.Logger;
 
 import net.sourceforge.tess4j.ITesseract;
@@ -18,7 +19,7 @@ public class RelicReader {
 	private ITesseract tess;
 	private INameFixer dataBase;
 
-	public RelicReader(BufferedImageProvider bip) throws AWTException {
+	public RelicReader(BufferedImageProvider bip) throws AWTException, IOException {
 		this.bip = bip;
 		imageExtractor = new ImageExtractor();
 
