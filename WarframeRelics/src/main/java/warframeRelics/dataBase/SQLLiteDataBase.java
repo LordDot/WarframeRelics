@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import warframeRelics.gui.Util;
@@ -96,7 +98,7 @@ public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 				String currentName = results.getString(1);
 				int distance = Util.stringDifference(name.toLowerCase(), currentName.toLowerCase());
 				if (distance == 0) {
-					log.info("Found Name " + currentName + "in database");
+					log.info("Found Name " + currentName + " in database");
 					return currentName;
 				}
 				if (distance < bestDistance) {
@@ -111,6 +113,18 @@ public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 		return bestName;
 	}
 
+	public List<String> getAllItems(){
+		List<String> ret = new ArrayList<>();
+		try (ResultSet results = getAllItemNames.executeQuery();) {
+			while (results.next()) {
+				ret.add(results.getString(1));
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+		return ret;
+	}
+	
 	public void addItem(String name) throws SQLException {
 		addItemByName.setInt(1, itemPrimaryKeyCounter);
 		addItemByName.setString(2, name);
@@ -196,6 +210,8 @@ public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 			stmt.execute(EMPTY_ITEMS_TABLE);
 			stmt.execute(EMPTY_RELIC_TABLE);
 		}
+		itemPrimaryKeyCounter = 0;
+		relicPrimarykeyCounter = 0;
 	}
 
 	@Override

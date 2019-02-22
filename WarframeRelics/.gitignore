@@ -8,4 +8,5 @@ log.txt*
 *.lck
 /debug/
 /tessdata/eng.user-words
-image*.png
+*.png
+!/src/test/resources/**/*.png

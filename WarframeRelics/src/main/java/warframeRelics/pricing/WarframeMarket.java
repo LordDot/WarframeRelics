@@ -20,6 +20,9 @@ public class WarframeMarket extends Pricer {
 	public Price getPlat(String itemName) throws MalformedURLException, IOException {
 		String targetItem = removeBlueprint(itemName.toLowerCase()).replace(" ", "_");
 
+		targetItem = targetItem.replace("_band", "_collar_band").replaceAll("_buckle", "_collar_buckle").replace("kubrow_", "");
+		targetItem = targetItem.replace("&", "and");
+		
 		String url = "https://api.warframe.market/v1/items/" + targetItem + "/orders";
 		log.info("Searched for " + itemName + " with url " + url);
 
@@ -69,7 +72,7 @@ public class WarframeMarket extends Pricer {
 
 	private String removeBlueprint(String name) {
 		if (!(name.contains("helios") || name.contains("carrier") || name.contains("wyrm"))) {
-			if (name.contains("systems") || name.contains("chassis") || name.contains("neuroptics")) {
+			if (name.contains("systems") || name.contains("chassis") || name.contains("neuroptics") || name.contains("harness") || name.contains("wings")) {
 				name = name.substring(0, name.length() - 10);
 			}
 		}
