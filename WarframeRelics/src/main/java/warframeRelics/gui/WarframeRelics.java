@@ -15,7 +15,7 @@ import warframeRelics.dataBase.SQLLiteDataBase;
 
 public class WarframeRelics extends Application{
 
-	public static String VERSION = "1.1.4.3";
+	public static String VERSION = "1.1.5.0";
 
 
 	private static final Logger log = Logger.getLogger(WarframeRelics.class.getName());
