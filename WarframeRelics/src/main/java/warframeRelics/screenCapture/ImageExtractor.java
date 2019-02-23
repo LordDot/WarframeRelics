@@ -69,7 +69,7 @@ public class ImageExtractor {
 				int r = (color & (255 << 16)) >> 16;
 				int g = (color & (255 << 8)) >> 8;
 				int b = color & 255;
-				if(b < 100 && g < 100 && b < 100) {
+				if(r < 100 && g < 100 && b < 100) {
 					players.setRGB(k, j, 255 << 24);
 				}else {
 					players.setRGB(k,j,Integer.MAX_VALUE);

@@ -55,8 +55,9 @@ public class WarframeRelicsController implements Initializable {
 	private Label[] labels;
 	private PriceDisplayer[] prices;
 
+
 	public WarframeRelicsController(SQLLiteDataBase dataBase, String fromFile) {
-		
+
 		try {
 			this.database = dataBase;
 			BufferedImageProvider prov;
@@ -66,6 +67,7 @@ public class WarframeRelicsController implements Initializable {
 				prov = new FileImageProvider(new FileInputStream(fromFile));
 			}
 			relicReader = new RelicReader(dataBase, prov, ScreenResolution.S1920x1080);
+
 		} catch (AWTException | IOException e1) {
 			e1.printStackTrace();
 			log.severe(e1.toString());
@@ -110,7 +112,7 @@ public class WarframeRelicsController implements Initializable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void update() {
 		new Thread(() -> {
 			try {
