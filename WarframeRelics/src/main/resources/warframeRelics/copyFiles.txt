@@ -1,0 +1,1 @@
+warframeRelics/ENG.traineddata; ./tessdata/ENG.traineddata

@@ -7,6 +7,6 @@ db.db
 log.txt*
 *.lck
 /debug/
-/tessdata/eng.user-words
+/tessdata/
 *.png
 !/src/test/resources/**/*.png

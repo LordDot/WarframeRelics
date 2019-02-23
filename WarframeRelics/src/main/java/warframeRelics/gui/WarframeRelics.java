@@ -75,6 +75,8 @@ public class WarframeRelics extends Application {
 		handler.setFormatter(new SimpleFormatter());
 		rootLogger.addHandler(handler);
 
+		new FileExtractor("warframeRelics/copyFiles.txt").extractFiles();
+		
 		launch(args);
 	}
 
