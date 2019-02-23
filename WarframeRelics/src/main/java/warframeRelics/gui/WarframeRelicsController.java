@@ -62,7 +62,7 @@ public class WarframeRelicsController implements Initializable {
 			this.database = dataBase;
 			BufferedImageProvider prov;
 			if(fromFile==null){
-				prov = new ScreenBufferedImageProvider();
+				prov = new ScreenBufferedImageProvider(ScreenResolution.S1920x1080);
 			}else {
 				prov = new FileImageProvider(new FileInputStream(fromFile));
 			}

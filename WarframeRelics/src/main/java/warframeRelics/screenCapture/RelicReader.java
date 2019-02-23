@@ -34,6 +34,7 @@ public class RelicReader {
 	
 	public void setResolution(ScreenResolution resolution) throws IOException {
 		imageExtractor.setResolution(resolution);
+		bip.setResolution(resolution);
 	}
 
 	

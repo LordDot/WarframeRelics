@@ -20,4 +20,9 @@ public class FileImageProvider implements BufferedImageProvider{
 		return image;
 	}
 
+	@Override
+	public void setResolution(ScreenResolution resolution) {
+		
+	}
+
 }
