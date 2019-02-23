@@ -19,7 +19,7 @@ import warframeRelics.dataBase.SQLLiteDataBase;
 
 public class WarframeRelics extends Application {
 
-	public static final String VERSION = "1.3.4.0";
+	public static final String VERSION = "1.3.5.0";
 	public static final String TESSDATA_PATH = "./tessdata";
 	public static final String DB_PATH = "./db.db";
 	public static final String LOG_PATH = "./log.txt";
