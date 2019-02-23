@@ -24,7 +24,6 @@ public class FileExtractor {
 				File target = new File(split[1].trim());
 				if (!target.exists()) {
 					target.getParentFile().mkdirs();
-					target.createNewFile();
 					try (InputStream in = getClass().getClassLoader().getResourceAsStream(split[0].trim())) {
 						Files.copy(in, target.toPath());
 					}
