@@ -33,7 +33,7 @@ public class ScreenResolution {
 	public static ScreenResolution valueOf(String string) {
 		ScreenResolution[] vals = values();
 		for(int i = 0; i < vals.length; i++) {
-			if(vals[i].equals(string)) {
+			if(vals[i].name().equals(string)) {
 				return vals[i];
 			}
 		}
