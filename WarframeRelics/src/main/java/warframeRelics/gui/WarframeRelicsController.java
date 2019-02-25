@@ -28,8 +28,8 @@ import javafx.util.StringConverter;
 import net.sourceforge.tess4j.TesseractException;
 import warframeRelics.dataBase.SQLLiteDataBase;
 import warframeRelics.dataDownload.DataDownLoader;
-import warframeRelics.pricing.Pricer;
 import warframeRelics.pricing.WarframeMarket;
+import warframeRelics.pricing.WarframeMarket.Price;
 import warframeRelics.screenCapture.BufferedImageProvider;
 import warframeRelics.screenCapture.FileImageProvider;
 import warframeRelics.screenCapture.RelicReader;
@@ -41,7 +41,7 @@ public class WarframeRelicsController implements Initializable {
 
 	private RelicReader relicReader;
 	private SQLLiteDataBase database;
-	private Pricer pricer;
+	private WarframeMarket warframeMarket;
 	private int debugImageCounter;
 
 	@FXML
@@ -72,7 +72,7 @@ public class WarframeRelicsController implements Initializable {
 			e1.printStackTrace();
 			log.severe(e1.toString());
 		}
-		pricer = new WarframeMarket();
+		warframeMarket = new WarframeMarket();
 	}
 
 	@Override
@@ -160,11 +160,11 @@ public class WarframeRelicsController implements Initializable {
 					final String text = labelText;
 					Platform.runLater(() -> labels[index].setText(text));
 
-					final Pricer.Price p;
+					final Price p;
 					if (rewards[i].equals("Forma Blueprint")) {
 						p = null;
 					} else {
-						p = pricer.getPlat(rewards[i]);
+						p = warframeMarket.getPlat(rewards[i]);
 					}
 					Platform.runLater(() -> prices[index].setPrice(p));
 				}

@@ -15,8 +15,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
-import warframeRelics.pricing.Pricer;
-import warframeRelics.pricing.Pricer.Price;
+import warframeRelics.pricing.WarframeMarket.Price;
 
 public class PriceDisplayer extends GridPane {
 	private Property<Price> priceProperty;
@@ -69,7 +68,7 @@ public class PriceDisplayer extends GridPane {
 		});
 	}
 
-	public void setPrice(Pricer.Price p) {
+	public void setPrice(Price p) {
 		priceProperty.setValue(p);
 	}
 
