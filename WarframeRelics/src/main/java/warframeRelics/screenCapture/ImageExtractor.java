@@ -32,7 +32,7 @@ public class ImageExtractor {
 		InputStream stream = ImageExtractor.class.getResourceAsStream("relicsPositions.json");
 		JsonObject root = parser.parse(new InputStreamReader(stream)).getAsJsonObject();
 		stream.close();
-		JsonObject info = root.get(resolution.name().substring(1)).getAsJsonObject().get("full").getAsJsonObject();
+		JsonObject info = root.get(resolution.name()).getAsJsonObject().get("full").getAsJsonObject();
 		JsonObject names = info.get("names").getAsJsonObject();
 		int namesX = names.get("x").getAsInt();
 		int namesY = names.get("y").getAsInt();

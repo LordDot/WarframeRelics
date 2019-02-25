@@ -36,6 +36,7 @@ import warframeRelics.pricing.WarframeMarket.Price;
 import warframeRelics.screenCapture.BufferedImageProvider;
 import warframeRelics.screenCapture.FileImageProvider;
 import warframeRelics.screenCapture.RelicReader;
+import warframeRelics.screenCapture.ResolutionFile;
 import warframeRelics.screenCapture.ScreenBufferedImageProvider;
 import warframeRelics.screenCapture.ScreenResolution;
 
@@ -53,23 +54,25 @@ public class WarframeRelicsController implements Initializable {
 	@FXML
 	private ChoiceBox<ScreenResolution> resolutionComboBox;
 	private ScreenResolution resolution;
-
+	private ResolutionFile resolutionFile;
+	
 	private Label[] nameLabels;
 	private List<PriceDisplayer[]> prices;
 
 	private List<Pricer> pricers;
 
-	public WarframeRelicsController(SQLLiteDataBase dataBase, String fromFile) {
+	public WarframeRelicsController(SQLLiteDataBase dataBase, String resolutionFile, String fromFile) {
 		this.database = dataBase;
-
+		this.resolutionFile = new ResolutionFile(getClass().getClassLoader().getResourceAsStream(resolutionFile));
+		
 		try {
 			BufferedImageProvider prov;
 			if (fromFile == null) {
-				prov = new ScreenBufferedImageProvider(ScreenResolution.S1920x1080);
+				prov = new ScreenBufferedImageProvider(this.resolutionFile.getFromString("1920x1080"));
 			} else {
 				prov = new FileImageProvider(new FileInputStream(fromFile));
 			}
-			relicReader = new RelicReader(dataBase, prov, ScreenResolution.S1920x1080);
+			relicReader = new RelicReader(dataBase, prov, this.resolutionFile.getFromString("1920x1080"));
 
 		} catch (AWTException | IOException e1) {
 			e1.printStackTrace();
@@ -109,20 +112,20 @@ public class WarframeRelicsController implements Initializable {
 			prices.add(priceDisplayers);
 		}
 
-		resolutionComboBox.getItems().addAll(ScreenResolution.values());
+		resolutionComboBox.getItems().addAll(this.resolutionFile.getResolutions());
 		resolutionComboBox.setConverter(new StringConverter<ScreenResolution>() {
 
 			@Override
 			public String toString(ScreenResolution object) {
-				return object.name().substring(1);
+				return object.name();
 			}
 
 			@Override
 			public ScreenResolution fromString(String string) {
-				return ScreenResolution.valueOf("S" + string);
+				return resolutionFile.getFromString(string);
 			}
 		});
-		resolutionComboBox.setValue(ScreenResolution.S1920x1080);
+		resolutionComboBox.setValue(resolutionFile.getFromString("1920x1080"));
 	}
 
 	public void setResolution() {
