@@ -228,4 +228,12 @@ public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 		getItemsByRelic.close();
 		connection.close();
 	}
+	
+	@Override
+	public void setFastMode(boolean fastMode) throws SQLException {
+		if(!fastMode) {
+			connection.commit();
+		}
+		connection.setAutoCommit(fastMode);
+	}
 }

@@ -7,90 +7,95 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<fx:root minHeight="70.0" minWidth="150.0" prefHeight="70.0" prefWidth="200.0" type="javafx.scene.layout.GridPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-	<columnConstraints>
-		<ColumnConstraints minWidth="10.0" percentWidth="16.67" prefWidth="100.0" />
-		<ColumnConstraints percentWidth="33.33" />
-		<ColumnConstraints percentWidth="33.33" />
-		<ColumnConstraints percentWidth="33.33" />
-	</columnConstraints>
-	<rowConstraints>
-		<RowConstraints percentHeight="50.0" />
-		<RowConstraints percentHeight="50.0" />
-	</rowConstraints>
+<fx:root minHeight="70.0" minWidth="150.0" prefHeight="70.0" prefWidth="200.0" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
-		<StackPane GridPane.columnIndex="1" GridPane.rowIndex="0">
-			<children>
-				<Label fx:id="ingameBuy" alignment="CENTER" textFill="MEDIUMPURPLE">
-					<font>
-						<Font size="16.0" />
-					</font>
-				</Label>
-			</children>
-		</StackPane>
-		<StackPane GridPane.columnIndex="2" GridPane.rowIndex="0">
-			<children>
-				<Label fx:id="onlineBuy" alignment="CENTER" textFill="DARKGREEN">
-					<font>
-						<Font size="16.0" />
-					</font>
-				</Label>
-			</children>
-		</StackPane>
-		<StackPane GridPane.columnIndex="3" GridPane.rowIndex="0">
-			<children>
-				<Label fx:id="offlineBuy" alignment="CENTER" textFill="DARKRED">
-					<font>
-						<Font size="16.0" />
-					</font>
-				</Label>
-			</children>
-		</StackPane>
-		<StackPane GridPane.columnIndex="1" GridPane.rowIndex="1">
-			<children>
-				<Label fx:id="ingameSell" alignment="CENTER" textFill="MEDIUMPURPLE">
-					<font>
-						<Font size="16.0" />
-					</font>
-				</Label>
-			</children>
-		</StackPane>
-		<StackPane GridPane.columnIndex="2" GridPane.rowIndex="1">
-			<children>
-				<Label fx:id="onlineSell" alignment="CENTER" textFill="DARKGREEN">
-					<font>
-						<Font size="16.0" />
-					</font>
-				</Label>
-			</children>
-		</StackPane>
-		<StackPane GridPane.columnIndex="3" GridPane.rowIndex="1">
-			<children>
-				<Label fx:id="offlineSell" alignment="CENTER" textFill="DARKRED">
-					<font>
-						<Font size="16.0" />
-					</font>
-				</Label>
-			</children>
-		</StackPane>
-		<StackPane prefHeight="100.0" prefWidth="200.0">
-			<children>
-				<Label alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="30.0" rotate="90.0" style="-fx-background-color: #c6e1d7; -fx-background-radius: 4;" text="WTB" textFill="#4d8e6a">
-					<font>
-						<Font size="10.0" />
-					</font>
-				</Label>
-			</children>
-		</StackPane>
-		<StackPane prefHeight="150.0" prefWidth="200.0" GridPane.rowIndex="1">
-			<children>
-				<Label alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="30.0" rotate="90.0" style="-fx-background-color: #e1c6d7; -fx-background-radius: 4;" text="WTS" textFill="#7f2c62">
-					<font>
-						<Font size="10.0" />
-					</font>
-				</Label>
-			</children>
-		</StackPane>
+			<GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+				<columnConstraints>
+					<ColumnConstraints minWidth="10.0" percentWidth="16.67" prefWidth="100.0" />
+					<ColumnConstraints percentWidth="33.33" />
+					<ColumnConstraints percentWidth="33.33" />
+					<ColumnConstraints percentWidth="33.33" />
+				</columnConstraints>
+				<rowConstraints>
+					<RowConstraints percentHeight="50.0" />
+					<RowConstraints percentHeight="50.0" />
+				</rowConstraints>
+				<children>
+					<StackPane GridPane.columnIndex="1" GridPane.rowIndex="0">
+						<children>
+							<Label fx:id="ingameBuy" alignment="CENTER" textFill="MEDIUMPURPLE">
+								<font>
+									<Font size="16.0" />
+								</font>
+							</Label>
+						</children>
+					</StackPane>
+					<StackPane GridPane.columnIndex="2" GridPane.rowIndex="0">
+						<children>
+							<Label fx:id="onlineBuy" alignment="CENTER" textFill="DARKGREEN">
+								<font>
+									<Font size="16.0" />
+								</font>
+							</Label>
+						</children>
+					</StackPane>
+					<StackPane GridPane.columnIndex="3" GridPane.rowIndex="0">
+						<children>
+							<Label fx:id="offlineBuy" alignment="CENTER" textFill="DARKRED">
+								<font>
+									<Font size="16.0" />
+								</font>
+							</Label>
+						</children>
+					</StackPane>
+					<StackPane GridPane.columnIndex="1" GridPane.rowIndex="1">
+						<children>
+							<Label fx:id="ingameSell" alignment="CENTER" textFill="MEDIUMPURPLE">
+								<font>
+									<Font size="16.0" />
+								</font>
+							</Label>
+						</children>
+					</StackPane>
+					<StackPane GridPane.columnIndex="2" GridPane.rowIndex="1">
+						<children>
+							<Label fx:id="onlineSell" alignment="CENTER" textFill="DARKGREEN">
+								<font>
+									<Font size="16.0" />
+								</font>
+							</Label>
+						</children>
+					</StackPane>
+					<StackPane GridPane.columnIndex="3" GridPane.rowIndex="1">
+						<children>
+							<Label fx:id="offlineSell" alignment="CENTER" textFill="DARKRED">
+								<font>
+									<Font size="16.0" />
+								</font>
+							</Label>
+						</children>
+					</StackPane>
+					<StackPane prefHeight="100.0" prefWidth="200.0">
+						<children>
+							<Label alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="30.0" rotate="90.0" style="-fx-background-color: #c6e1d7; -fx-background-radius: 4;" text="WTB" textFill="#4d8e6a">
+								<font>
+									<Font size="10.0" />
+								</font>
+							</Label>
+						</children>
+					</StackPane>
+					<StackPane prefHeight="150.0" prefWidth="200.0" GridPane.rowIndex="1">
+						<children>
+							<Label alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="30.0" rotate="90.0" style="-fx-background-color: #e1c6d7; -fx-background-radius: 4;" text="WTS" textFill="#7f2c62">
+								<font>
+									<Font size="10.0" />
+								</font>
+							</Label>
+						</children>
+					</StackPane>
+				</children>
+			</GridPane>
 	</children>
 </fx:root>

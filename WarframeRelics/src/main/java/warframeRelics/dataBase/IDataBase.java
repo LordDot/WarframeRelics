@@ -10,4 +10,5 @@ public interface IDataBase extends INameFixer{
 	public void setItemVaulted(String name, boolean vaulted) throws SQLException;
 	public void updateItemData() throws SQLException;
 	public boolean getItemVaulted(String name) throws SQLException;
+	void setFastMode(boolean fastMode) throws SQLException;
 }

@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -23,6 +25,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 import net.sourceforge.tess4j.TesseractException;
@@ -41,7 +44,6 @@ public class WarframeRelicsController implements Initializable {
 
 	private RelicReader relicReader;
 	private SQLLiteDataBase database;
-	private WarframeMarket warframeMarket;
 	private int debugImageCounter;
 
 	@FXML
@@ -51,19 +53,20 @@ public class WarframeRelicsController implements Initializable {
 	@FXML
 	private ChoiceBox<ScreenResolution> resolutionComboBox;
 	private ScreenResolution resolution;
-	
-	private Label[] labels;
-	private PriceDisplayer[] prices;
 
+	private Label[] nameLabels;
+	private List<PriceDisplayer[]> prices;
+
+	private List<Pricer> pricers;
 
 	public WarframeRelicsController(SQLLiteDataBase dataBase, String fromFile) {
+		this.database = dataBase;
 
 		try {
-			this.database = dataBase;
 			BufferedImageProvider prov;
-			if(fromFile==null){
+			if (fromFile == null) {
 				prov = new ScreenBufferedImageProvider(ScreenResolution.S1920x1080);
-			}else {
+			} else {
 				prov = new FileImageProvider(new FileInputStream(fromFile));
 			}
 			relicReader = new RelicReader(dataBase, prov, ScreenResolution.S1920x1080);
@@ -72,30 +75,48 @@ public class WarframeRelicsController implements Initializable {
 			e1.printStackTrace();
 			log.severe(e1.toString());
 		}
-		warframeMarket = new WarframeMarket();
+
+		prices = new ArrayList<>();
+		pricers = new ArrayList<>();
+		pricers.add(new WarframeMarketWrapper());
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		labels = new Label[4];
-		prices = new PriceDisplayer[4];
+		nameLabels = new Label[4];
 		for (int i = 0; i < 4; i++) {
-			labels[i] = new Label();
-			table.add(Util.stretch(labels[i]), 0, i);
-			labels[i].setAlignment(Pos.CENTER_RIGHT);
+			nameLabels[i] = new Label();
+			table.add(Util.stretch(nameLabels[i]), 0, i + 1);
+			nameLabels[i].setAlignment(Pos.CENTER_RIGHT);
 
-			prices[i] = new PriceDisplayer();
-			table.add(Util.stretch(prices[i]), 1, i);
 		}
-		
+
+		prices = new ArrayList<>();
+		for (int i = 0; i < pricers.size(); i++) {
+			Pricer p = pricers.get(i);
+
+			ColumnConstraints c = new ColumnConstraints();
+			c.setPercentWidth(p.getColumnWidth());
+			table.getColumnConstraints().add(c);
+
+			table.add(p.getHeader(), i + 1, 0);
+
+			PriceDisplayer[] priceDisplayers = new PriceDisplayer[4];
+			for (int j = 0; j < 4; j++) {
+				priceDisplayers[j] = p.getPriceDisplayer();
+				table.add(priceDisplayers[j], i + 1, j + 1);
+			}
+			prices.add(priceDisplayers);
+		}
+
 		resolutionComboBox.getItems().addAll(ScreenResolution.values());
 		resolutionComboBox.setConverter(new StringConverter<ScreenResolution>() {
-			
+
 			@Override
 			public String toString(ScreenResolution object) {
 				return object.name().substring(1);
 			}
-			
+
 			@Override
 			public ScreenResolution fromString(String string) {
 				return ScreenResolution.valueOf("S" + string);
@@ -118,8 +139,14 @@ public class WarframeRelicsController implements Initializable {
 			try {
 				Platform.runLater(() -> progressBar.setProgress(-1.0));
 				database.emptyTables();
+				database.setFastMode(true);
 				DataDownLoader dl = new DataDownLoader(database);
-				Set<String> wordList = dl.downLoadPartData();
+				Set<String> wordList = null;
+				try {
+					wordList = dl.downLoadPartData();
+				}finally {
+					database.setFastMode(false);
+				}
 				File f = new File("tessdata/eng.user-words");
 				if (f.exists()) {
 					f.delete();
@@ -132,7 +159,11 @@ public class WarframeRelicsController implements Initializable {
 						out.append("\n");
 					}
 				}
-				dl.downloadMissionData();
+				try {
+					dl.downloadMissionData();
+				}finally {
+					database.setFastMode(false);
+				}
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 				log.severe(e1.toString());
@@ -151,27 +182,24 @@ public class WarframeRelicsController implements Initializable {
 			try {
 				String[] rewards = relicReader.readRelics();
 				int i;
-				for (i= 0; i < rewards.length; i++) {
+				for (i = 0; i < rewards.length; i++) {
 					String labelText = rewards[i];
 					if (database.getItemVaulted(rewards[i])) {
 						labelText += " (v)";
 					}
 					int index = i;
 					final String text = labelText;
-					Platform.runLater(() -> labels[index].setText(text));
-
-					final Price p;
-					if (rewards[i].equals("Forma Blueprint")) {
-						p = null;
-					} else {
-						p = warframeMarket.getPlat(rewards[i]);
+					Platform.runLater(() -> nameLabels[index].setText(text));
+					for (PriceDisplayer[] pd : prices) {
+						pd[index].setPrice(rewards[index]);
 					}
-					Platform.runLater(() -> prices[index].setPrice(p));
 				}
-				for(; i < 4;i++) {
+				for (; i < 4; i++) {
 					int index = i;
-					Platform.runLater(() -> labels[index].setText(""));
-					Platform.runLater(() -> prices[index].setPrice(null));
+					Platform.runLater(() -> nameLabels[index].setText(""));
+					for (PriceDisplayer[] pd : prices) {
+						pd[index].setPrice(null);
+					}
 				}
 			} catch (TesseractException e1) {
 				e1.printStackTrace();
@@ -196,7 +224,8 @@ public class WarframeRelicsController implements Initializable {
 				f.mkdirs();
 				f.createNewFile();
 				log.info("writing debug image number" + debugImageCounter);
-				ImageIO.write(new Robot().createScreenCapture(new Rectangle(0, 0, resolution.getWidth(), resolution.getHeight())), "png", f);
+				ImageIO.write(new Robot().createScreenCapture(
+						new Rectangle(0, 0, resolution.getWidth(), resolution.getHeight())), "png", f);
 			} catch (IOException e) {
 				e.printStackTrace();
 				log.severe(e.toString());

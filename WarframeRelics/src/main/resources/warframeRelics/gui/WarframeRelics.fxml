@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.effect.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="350.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="warframeRelics.gui.WarframeRelicsController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="warframeRelics.gui.WarframeRelicsController">
    <children>
       <BorderPane layoutX="23.0" layoutY="25.0" prefHeight="300.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <bottom>
@@ -25,36 +32,51 @@
                </children>
             </AnchorPane>
          </top>
-         <right>
-            <VBox alignment="BOTTOM_RIGHT" spacing="5.0" BorderPane.alignment="CENTER">
-               <children>
-                  <Button minWidth="100.0" mnemonicParsing="false" onAction="#readRewards" prefHeight="42.0" prefWidth="150.0" text="Read Rewards" />
-                  <Button minWidth="100.0" mnemonicParsing="false" onAction="#takeScreenshot" prefHeight="42.0" prefWidth="150.0" text="Take Screenshot" />
-                  <Button minWidth="100.0" mnemonicParsing="false" onAction="#update" prefHeight="42.0" prefWidth="150.0" text="Update" />
-               </children>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </VBox>
-         </right>
          <center>
             <GridPane fx:id="table" hgap="5.0" vgap="5.0" BorderPane.alignment="CENTER">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="142.0" minWidth="10.0" percentWidth="50.0" prefWidth="104.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="96.0" minWidth="10.0" percentWidth="50.0" prefWidth="96.0" />
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints percentHeight="25.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="0.0" minHeight="0.0" percentHeight="25.0" prefHeight="0.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="0.0" minHeight="0.0" percentHeight="25.0" prefHeight="0.0" vgrow="SOMETIMES" />
-                  <RowConstraints percentHeight="25.0" vgrow="SOMETIMES" />
+                  <RowConstraints percentHeight="20.0" vgrow="SOMETIMES" />
+                <RowConstraints percentHeight="20.0" vgrow="SOMETIMES" />
+                <RowConstraints percentHeight="20.0" vgrow="SOMETIMES" />
+                <RowConstraints percentHeight="20.0" vgrow="SOMETIMES" />
+                  <RowConstraints percentHeight="20.0" vgrow="SOMETIMES" />
               </rowConstraints>
+               <children>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <Label alignment="BOTTOM_CENTER" prefHeight="58.0" prefWidth="340.0" text="Name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <font>
+                              <Font size="19.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+               </children>
             </GridPane>
          </center>
+         <right>
+            <HBox BorderPane.alignment="CENTER">
+               <children>
+                  <Separator orientation="VERTICAL" prefHeight="200.0" />
+                  <VBox alignment="BOTTOM_RIGHT" spacing="5.0">
+                     <children>
+                        <JFXButton buttonType="RAISED" minWidth="100.0" mnemonicParsing="false" onAction="#readRewards" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffaf3f;" text="Read Rewards" />
+                        <JFXButton  minWidth="100.0" mnemonicParsing="false" onAction="#takeScreenshot" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffffff" text="Take Screenshot" />
+                        <JFXButton minWidth="100.0" mnemonicParsing="false" onAction="#update" prefHeight="42.0" prefWidth="150.0" text="Update" style="-fx-background-color: #ffffff"/>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </HBox>
+         </right>
       </BorderPane>
-      <HBox layoutX="-286.0" layoutY="-175.0" prefHeight="100.0" prefWidth="200.0" />
    </children>
 </AnchorPane>
