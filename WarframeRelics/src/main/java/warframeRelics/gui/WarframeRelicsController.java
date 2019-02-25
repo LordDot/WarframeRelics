@@ -162,6 +162,7 @@ public class WarframeRelicsController implements Initializable {
 						out.append("\n");
 					}
 				}
+				database.setFastMode(true);
 				try {
 					dl.downloadMissionData();
 				}finally {

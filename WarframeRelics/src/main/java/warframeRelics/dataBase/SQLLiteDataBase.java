@@ -234,6 +234,6 @@ public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 		if(!fastMode) {
 			connection.commit();
 		}
-		connection.setAutoCommit(fastMode);
+		connection.setAutoCommit(!fastMode);
 	}
 }
