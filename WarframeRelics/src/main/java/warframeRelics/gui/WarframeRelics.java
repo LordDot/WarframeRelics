@@ -57,7 +57,7 @@ public class WarframeRelics extends Application {
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("WarframeRelics.fxml"));
 		loader.setControllerFactory((Class<?> param) -> {
-			return new WarframeRelicsController(database, imageFile);
+			return new WarframeRelicsController(database,"warframeRelics/screenCapture/relicsPositions.json", imageFile );
 		});
 		Parent root = loader.load();
 		mainScene = new Scene(root, 600, 410);
