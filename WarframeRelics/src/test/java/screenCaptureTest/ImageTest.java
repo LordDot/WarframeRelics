@@ -97,5 +97,10 @@ public class ImageTest {
 			}
 		}
 
+		@Override
+		public void setResolution(ScreenResolution resolution) {
+			
+		}
+
 	}
 }
