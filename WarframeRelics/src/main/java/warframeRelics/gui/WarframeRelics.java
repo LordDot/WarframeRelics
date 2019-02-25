@@ -60,7 +60,7 @@ public class WarframeRelics extends Application {
 			return new WarframeRelicsController(database, imageFile);
 		});
 		Parent root = loader.load();
-		mainScene = new Scene(root, 600, 400);
+		mainScene = new Scene(root, 600, 410);
 		stage.setScene(mainScene);
 		stage.show();
 	}
