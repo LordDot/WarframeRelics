@@ -62,7 +62,7 @@ public class RelicReader {
 			String read = tess.doOCR(images[i]);
 			log.info("read " + read);
 			String[] split = read.split("\n");
-			if (Util.stringDifference(split[split.length - 1], "BLUEPRINT") < 4) {
+			if (Util.stringDifference(split[split.length - 1].replaceAll(" ", ""), "BLUEPRINT") < 4) {
 				ret[i] = split[split.length - 2] + split[split.length - 1];
 			} else {
 				ret[i] = split[split.length - 1];
