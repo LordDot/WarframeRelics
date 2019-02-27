@@ -24,6 +24,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -58,8 +59,8 @@ public class WarframeRelicsController implements Initializable {
 	private ProgressBar progressBar;
 	private Stage mainStage;
 
-	private Label[] nameLabels;
-	private List<PriceDisplayer[]> prices;
+//	private Label[] nameLabels;
+	private List<Updatable<PriceDisplayer>[]> prices;
 
 	private Map<Pricer, Boolean> pricers;
 
@@ -89,15 +90,16 @@ public class WarframeRelicsController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		nameLabels = new Label[4];
-		for (int i = 0; i < 4; i++) {
-			nameLabels[i] = new Label();
-			table.add(Util.stretch(nameLabels[i]), 0, i + 1);
-			nameLabels[i].setAlignment(Pos.CENTER_RIGHT);
-
-		}
+//		nameLabels = new Label[4];
+//		for (int i = 0; i < 4; i++) {
+//			nameLabels[i] = new Label();
+//			table.add(Util.stretch(nameLabels[i]), 0, i + 1);
+//			nameLabels[i].setAlignment(Pos.CENTER_RIGHT);
+//
+//		}
 		
 		List<Pricer> pricers = new ArrayList<>();
+		pricers.add(new NamePricer(database));
 		pricers.add(new WarframeMarketWrapper());
 		setPriceDisplayers(pricers);
 	}
@@ -111,12 +113,13 @@ public class WarframeRelicsController implements Initializable {
 			ColumnConstraints c = new ColumnConstraints();
 			c.setPercentWidth(p.getColumnWidth());
 			table.getColumnConstraints().add(c);
-			table.add(p.getHeader(), i + 1, 0);
+			table.add(p.getHeader(), i, 0);
 
-			PriceDisplayer[] priceDisplayers = new PriceDisplayer[4];
+			@SuppressWarnings("unchecked")
+			Updatable<PriceDisplayer>[] priceDisplayers = (Updatable<PriceDisplayer>[])new Updatable[4];
 			for (int j = 0; j < 4; j++) {
-				priceDisplayers[j] = p.getPriceDisplayer();
-				table.add(priceDisplayers[j], i + 1, j + 1);
+				priceDisplayers[j] = new Updatable<>(p.getPriceDisplayer());
+				table.add(priceDisplayers[j], i, j + 1);
 			}
 			prices.add(priceDisplayers);
 		}
@@ -124,8 +127,8 @@ public class WarframeRelicsController implements Initializable {
 	}
 	
 	public void removePriceDisplayers() {
-		table.getChildren().removeIf(node -> GridPane.getColumnIndex(node) != null &&GridPane.getColumnIndex(node) > 0);
-		table.getColumnConstraints().remove(1, table.getColumnConstraints().size());
+		table.getChildren().clear();
+		table.getColumnConstraints().clear();
 		prices.clear();
 		this.pricers.forEach((p,b) -> pricers.put(p, false));
 	}
@@ -140,28 +143,30 @@ public class WarframeRelicsController implements Initializable {
 	}
 
 	public void readRewards() {
+		for(Updatable<PriceDisplayer>[] ua : prices) {
+			for(int i = 0; i < ua.length; i++) {
+				ua[i].setUpdating(true);
+			}
+		}
 		new Thread(() -> {
 			Platform.runLater(() -> progressBar.setProgress(-1.0));
 			try {
 				String[] rewards = relicReader.readRelics();
 				int i;
 				for (i = 0; i < rewards.length; i++) {
-					String labelText = rewards[i];
-					if (database.getItemVaulted(rewards[i])) {
-						labelText += " (v)";
-					}
 					int index = i;
-					final String text = labelText;
-					Platform.runLater(() -> nameLabels[index].setText(text));
-					for (PriceDisplayer[] pd : prices) {
-						pd[index].setPrice(rewards[index]);
+					for (Updatable<PriceDisplayer>[] pd : prices) {
+						new Thread(()->{
+						pd[index].getNode().setPrice(rewards[index]);
+						Platform.runLater(()-> pd[index].setUpdating(false));
+						}).start();
 					}
 				}
 				for (; i < 4; i++) {
 					int index = i;
-					Platform.runLater(() -> nameLabels[index].setText(""));
-					for (PriceDisplayer[] pd : prices) {
-						pd[index].setPrice(null);
+					for (Updatable<PriceDisplayer>[] pd : prices) {
+						pd[index].getNode().setPrice(null);
+						Platform.runLater(()-> pd[index].setUpdating(false));
 					}
 				}
 			} catch (TesseractException e1) {

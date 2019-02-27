@@ -6,16 +6,14 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 
 public abstract class Pricer {
-	public String getName() {
-		return "";
-	}
+	public abstract String getName();
 	
 	public Node getHeader() {
 		Label ret = new Label();
 		ret.setAlignment(Pos.BOTTOM_CENTER);
 		ret.setText(getName());
 		ret.setFont(new Font("System", 19));
-		return ret;
+		return Util.stretch(ret);
 	}
 	
 	public double getColumnWidth() {

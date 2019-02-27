@@ -2,8 +2,6 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -12,21 +10,10 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="warframeRelics.gui.WarframeRelicsController">
    <children>
       <BorderPane layoutX="23.0" layoutY="25.0" prefHeight="300.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <bottom>
-            <AnchorPane BorderPane.alignment="CENTER">
-               <children>
-                  <ProgressBar fx:id="progressBar" layoutX="91.0" layoutY="134.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-               </children>
-            </AnchorPane>
-         </bottom>
-         <top>
-            <AnchorPane BorderPane.alignment="CENTER" />
-         </top>
          <center>
             <GridPane fx:id="table" hgap="5.0" vgap="5.0" BorderPane.alignment="CENTER">
               <columnConstraints>
@@ -39,17 +26,6 @@
                 <RowConstraints percentHeight="20.0" vgrow="SOMETIMES" />
                   <RowConstraints percentHeight="20.0" vgrow="SOMETIMES" />
               </rowConstraints>
-               <children>
-                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
-                     <children>
-                        <Label alignment="BOTTOM_CENTER" prefHeight="58.0" prefWidth="340.0" text="Name" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <font>
-                              <Font size="19.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </AnchorPane>
-               </children>
             </GridPane>
          </center>
          <right>
@@ -58,7 +34,7 @@
                   <Separator orientation="VERTICAL" prefHeight="200.0" />
                   <VBox alignment="BOTTOM_RIGHT" spacing="5.0">
                      <children>
-                        <JFXButton focusTraversable="false" buttonType="RAISED" minWidth="100.0" mnemonicParsing="false" onAction="#readRewards" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffaf3f;" text="Read Rewards" />
+                        <JFXButton buttonType="RAISED" focusTraversable="false" minWidth="100.0" mnemonicParsing="false" onAction="#readRewards" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffaf3f;" text="Read Rewards" />
                         <JFXButton focusTraversable="false" minWidth="100.0" mnemonicParsing="false" onAction="#takeScreenshot" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffffff" text="Take Screenshot" />
                         <JFXButton focusTraversable="false" minWidth="100.0" onAction="#openSettings" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffffff;" text="Settings" />
                      </children>
