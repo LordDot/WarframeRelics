@@ -49,12 +49,14 @@ public class WarframeMarketPriceDisplayer extends PriceDisplayer {
 			@Override
 			public void changed(ObservableValue<? extends Price> observable, Price oldValue, Price newValue) {
 				if (newValue == null) {
-					ingameBuy.setText("");
-					onlineBuy.setText("");
-					offlineBuy.setText("");
-					ingameSell.setText("");
-					onlineSell.setText("");
-					offlineSell.setText("");
+					Platform.runLater(() -> {
+						ingameBuy.setText("");
+						onlineBuy.setText("");
+						offlineBuy.setText("");
+						ingameSell.setText("");
+						onlineSell.setText("");
+						offlineSell.setText("");
+					});
 				} else {
 					setPrice(ingameBuy, newValue.getIngameBuy());
 					setPrice(onlineBuy, newValue.getOnlineBuy());
