@@ -90,7 +90,7 @@ public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 	}
 
 	@Override
-	public String getNearestItemName(String name) throws RuntimeException {
+	public synchronized String getNearestItemName(String name) throws RuntimeException {
 		String bestName = name;
 		int bestDistance = Integer.MAX_VALUE;
 		try (ResultSet results = getAllItemNames.executeQuery();) {
@@ -194,7 +194,7 @@ public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 	}
 
 	@Override
-	public boolean getItemVaulted(String name) throws SQLException {
+	public synchronized boolean getItemVaulted(String name) throws SQLException {
 		getItemByName.setString(1, name);
 		try (ResultSet res = getItemByName.executeQuery();) {
 			if (res.next()) {

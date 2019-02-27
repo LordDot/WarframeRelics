@@ -92,7 +92,7 @@ public class WarframeMarketPriceDisplayer extends PriceDisplayer {
 	@Override
 	public void setPrice(String itemName) {
 		try {
-			if (itemName != null) {
+			if (itemName != null && !itemName.equals("Forma Blueprint")) {
 				setPrice(pricer.getPlat(itemName));
 			} else {
 				setPrice((Price) null);

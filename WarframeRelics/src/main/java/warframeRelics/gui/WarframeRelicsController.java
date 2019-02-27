@@ -56,7 +56,6 @@ public class WarframeRelicsController implements Initializable {
 	@FXML
 	private GridPane table;
 	@FXML
-	private ProgressBar progressBar;
 	private Stage mainStage;
 
 //	private Label[] nameLabels;
@@ -149,7 +148,6 @@ public class WarframeRelicsController implements Initializable {
 			}
 		}
 		new Thread(() -> {
-			Platform.runLater(() -> progressBar.setProgress(-1.0));
 			try {
 				String[] rewards = relicReader.readRelics();
 				int i;
@@ -178,15 +176,12 @@ public class WarframeRelicsController implements Initializable {
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.severe(e.toString());
-			} finally {
-				Platform.runLater(() -> progressBar.setProgress(0));
 			}
 		}).start();
 	}
 
 	public void takeScreenshot() {
 		new Thread(() -> {
-			Platform.runLater(() -> progressBar.setProgress(-1.0));
 			try {
 				File f = new File("./debug/image" + debugImageCounter++ + ".png");
 				f.mkdirs();
@@ -200,8 +195,6 @@ public class WarframeRelicsController implements Initializable {
 			} catch (AWTException e) {
 				e.printStackTrace();
 				log.severe(e.toString());
-			} finally {
-				Platform.runLater(() -> progressBar.setProgress(0));
 			}
 		}).start();
 	}
