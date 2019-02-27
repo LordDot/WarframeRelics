@@ -14,9 +14,16 @@ public class WarframeMarketWrapper extends Pricer{
 		this.market = new WarframeMarket();
 	}
 	
+	
+	
+	@Override
+	public String getName() {
+		return "Warframe Market";
+	}
+
 	@Override
 	public Node getHeader() {
-		Label ret =  new Label("warframe.market\n         Prices");
+		Label ret =  new Label("Warframe Market\n         Prices");
 		ret.setAlignment(Pos.BOTTOM_CENTER);
 		ret.setFont(new Font("System", 19));
 		return Util.stretch(ret);

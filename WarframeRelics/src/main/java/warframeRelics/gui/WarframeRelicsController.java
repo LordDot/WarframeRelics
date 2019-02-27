@@ -11,7 +11,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -27,6 +29,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import net.sourceforge.tess4j.TesseractException;
 import warframeRelics.dataBase.SQLLiteDataBase;
@@ -46,25 +49,25 @@ public class WarframeRelicsController implements Initializable {
 	private RelicReader relicReader;
 	private SQLLiteDataBase database;
 	private int debugImageCounter;
+	private ResolutionFile resolutionFile;
+	private ScreenResolution resolution;
 
 	@FXML
 	private GridPane table;
 	@FXML
 	private ProgressBar progressBar;
-	@FXML
-	private ChoiceBox<ScreenResolution> resolutionComboBox;
-	private ScreenResolution resolution;
-	private ResolutionFile resolutionFile;
-	
+	private Stage mainStage;
+
 	private Label[] nameLabels;
 	private List<PriceDisplayer[]> prices;
 
-	private List<Pricer> pricers;
+	private Map<Pricer, Boolean> pricers;
 
-	public WarframeRelicsController(SQLLiteDataBase dataBase, String resolutionFile, String fromFile) {
+	public WarframeRelicsController(Stage stage, SQLLiteDataBase dataBase, String resolutionFile, String fromFile) {
+		this.mainStage = stage;
 		this.database = dataBase;
 		this.resolutionFile = new ResolutionFile(getClass().getClassLoader().getResourceAsStream(resolutionFile));
-		
+
 		try {
 			BufferedImageProvider prov;
 			if (fromFile == null) {
@@ -73,6 +76,7 @@ public class WarframeRelicsController implements Initializable {
 				prov = new FileImageProvider(new FileInputStream(fromFile));
 			}
 			relicReader = new RelicReader(dataBase, prov, this.resolutionFile.getFromString("1920x1080"));
+			resolution = this.resolutionFile.getFromString("1920x1080");
 
 		} catch (AWTException | IOException e1) {
 			e1.printStackTrace();
@@ -80,8 +84,7 @@ public class WarframeRelicsController implements Initializable {
 		}
 
 		prices = new ArrayList<>();
-		pricers = new ArrayList<>();
-		pricers.add(new WarframeMarketWrapper());
+		pricers = new LinkedHashMap<>();
 	}
 
 	@Override
@@ -93,15 +96,21 @@ public class WarframeRelicsController implements Initializable {
 			nameLabels[i].setAlignment(Pos.CENTER_RIGHT);
 
 		}
+		
+		List<Pricer> pricers = new ArrayList<>();
+		pricers.add(new WarframeMarketWrapper());
+		setPriceDisplayers(pricers);
+	}
 
-		prices = new ArrayList<>();
+	public void setPriceDisplayers(List<Pricer> pricers) {
+		removePriceDisplayers();
 		for (int i = 0; i < pricers.size(); i++) {
 			Pricer p = pricers.get(i);
-
+			this.pricers.put(p, true);
+			
 			ColumnConstraints c = new ColumnConstraints();
 			c.setPercentWidth(p.getColumnWidth());
 			table.getColumnConstraints().add(c);
-
 			table.add(p.getHeader(), i + 1, 0);
 
 			PriceDisplayer[] priceDisplayers = new PriceDisplayer[4];
@@ -111,73 +120,23 @@ public class WarframeRelicsController implements Initializable {
 			}
 			prices.add(priceDisplayers);
 		}
-
-		resolutionComboBox.getItems().addAll(this.resolutionFile.getResolutions());
-		resolutionComboBox.setConverter(new StringConverter<ScreenResolution>() {
-
-			@Override
-			public String toString(ScreenResolution object) {
-				return object.name();
-			}
-
-			@Override
-			public ScreenResolution fromString(String string) {
-				return resolutionFile.getFromString(string);
-			}
-		});
-		resolutionComboBox.setValue(resolutionFile.getFromString("1920x1080"));
+		mainStage.sizeToScene();
 	}
-
-	public void setResolution() {
-		resolution = resolutionComboBox.getValue();
+	
+	public void removePriceDisplayers() {
+		table.getChildren().removeIf(node -> GridPane.getColumnIndex(node) != null &&GridPane.getColumnIndex(node) > 0);
+		table.getColumnConstraints().remove(1, table.getColumnConstraints().size());
+		prices.clear();
+		this.pricers.forEach((p,b) -> pricers.put(p, false));
+	}
+	
+	public void setResolution(ScreenResolution resolution) {
+		this.resolution = resolution;
 		try {
 			relicReader.setResolution(resolution);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public void update() {
-		new Thread(() -> {
-			try {
-				Platform.runLater(() -> progressBar.setProgress(-1.0));
-				database.emptyTables();
-				database.setFastMode(true);
-				DataDownLoader dl = new DataDownLoader(database);
-				Set<String> wordList = null;
-				try {
-					wordList = dl.downLoadPartData();
-				}finally {
-					database.setFastMode(false);
-				}
-				File f = new File("tessdata/eng.user-words");
-				if (f.exists()) {
-					f.delete();
-				}
-				f.getParentFile().mkdirs();
-				f.createNewFile();
-				try (FileWriter out = new FileWriter(f);) {
-					for (String s : wordList) {
-						out.append(s);
-						out.append("\n");
-					}
-				}
-				database.setFastMode(true);
-				try {
-					dl.downloadMissionData();
-				}finally {
-					database.setFastMode(false);
-				}
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-				log.severe(e1.toString());
-			} catch (IOException e2) {
-				e2.printStackTrace();
-				log.severe(e2.toString());
-			} finally {
-				Platform.runLater(() -> progressBar.setProgress(0));
-			}
-		}).start();
 	}
 
 	public void readRewards() {
@@ -240,6 +199,24 @@ public class WarframeRelicsController implements Initializable {
 				Platform.runLater(() -> progressBar.setProgress(0));
 			}
 		}).start();
+	}
+
+	public void openSettings() {
+		SettingsDialog settings;
+		try {
+			settings = new SettingsDialog(mainStage, database, resolutionFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		settings.setResolution(resolution);
+		settings.setPricers(pricers);
+		
+		if(settings.showAndWait()) {
+			setResolution(settings.getResolution());
+			setPriceDisplayers(settings.getSelectedPricers());
+		}
 	}
 
 }

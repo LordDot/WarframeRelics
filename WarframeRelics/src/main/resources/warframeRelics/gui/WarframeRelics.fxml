@@ -2,7 +2,6 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Separator?>
@@ -26,11 +25,7 @@
             </AnchorPane>
          </bottom>
          <top>
-            <AnchorPane BorderPane.alignment="CENTER">
-               <children>
-                  <ChoiceBox fx:id="resolutionComboBox" onAction="#setResolution" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-               </children>
-            </AnchorPane>
+            <AnchorPane BorderPane.alignment="CENTER" />
          </top>
          <center>
             <GridPane fx:id="table" hgap="5.0" vgap="5.0" BorderPane.alignment="CENTER">
@@ -63,9 +58,9 @@
                   <Separator orientation="VERTICAL" prefHeight="200.0" />
                   <VBox alignment="BOTTOM_RIGHT" spacing="5.0">
                      <children>
-                        <JFXButton buttonType="RAISED" minWidth="100.0" mnemonicParsing="false" onAction="#readRewards" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffaf3f;" text="Read Rewards" />
-                        <JFXButton  minWidth="100.0" mnemonicParsing="false" onAction="#takeScreenshot" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffffff" text="Take Screenshot" />
-                        <JFXButton minWidth="100.0" mnemonicParsing="false" onAction="#update" prefHeight="42.0" prefWidth="150.0" text="Update" style="-fx-background-color: #ffffff"/>
+                        <JFXButton focusTraversable="false" buttonType="RAISED" minWidth="100.0" mnemonicParsing="false" onAction="#readRewards" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffaf3f;" text="Read Rewards" />
+                        <JFXButton focusTraversable="false" minWidth="100.0" mnemonicParsing="false" onAction="#takeScreenshot" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffffff" text="Take Screenshot" />
+                        <JFXButton focusTraversable="false" minWidth="100.0" onAction="#openSettings" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffffff;" text="Settings" />
                      </children>
                      <opaqueInsets>
                         <Insets />

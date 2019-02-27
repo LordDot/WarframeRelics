@@ -204,6 +204,7 @@ public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 		return true;
 	}
 
+	@Override
 	public void emptyTables() throws SQLException {
 		try (Statement stmt = connection.createStatement()) {
 			stmt.execute(EMPTY_DROPS_TABLE);

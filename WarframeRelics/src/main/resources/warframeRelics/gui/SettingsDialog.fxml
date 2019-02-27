@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="351.0" prefWidth="220.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <StackPane fx:id="stackPane" prefHeight="351.0" prefWidth="220.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <VBox prefHeight="351.0" prefWidth="220.0" spacing="15.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                     <children>
+                        <VBox spacing="5.0">
+                           <children>
+                              <Label text="ScreenResolution">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <AnchorPane>
+                                 <children>
+                                    <JFXComboBox fx:id="resolutionComboBox" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </VBox>
+                        <Separator prefWidth="200.0" />
+                        <VBox fx:id="pricerVBox" spacing="5.0">
+                           <children>
+                              <Label text="Displayed Values">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <Separator prefWidth="200.0" />
+                        <AnchorPane style="-fx-background-color: #ffffff;">
+                           <children>
+                              <JFXButton onAction="#updateData" prefHeight="42.0" text="Update Data" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                        <Separator prefWidth="200.0" />
+                        <VBox spacing="5.0">
+                           <children>
+                              <AnchorPane>
+                                 <children>
+                                    <JFXButton layoutX="38.0" layoutY="127.0" onAction="#accept" prefHeight="42.0" style="-fx-background-color: #ffffff;" text="Accept" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane>
+                                 <children>
+                                    <JFXButton layoutX="38.0" layoutY="127.0" onAction="#cancel" prefHeight="42.0" style="-fx-background-color: #ffffff;" text="Cancel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+         </children>
+      </StackPane>
+   </children>
+</AnchorPane>
