@@ -38,6 +38,7 @@ import warframeRelics.dataDownload.DataDownLoader;
 import warframeRelics.gui.priceControls.NamePricer;
 import warframeRelics.gui.priceControls.PriceDisplayer;
 import warframeRelics.gui.priceControls.Pricer;
+import warframeRelics.gui.priceControls.PricerFactory;
 import warframeRelics.gui.priceControls.WarframeMarketWrapper;
 import warframeRelics.pricing.WarframeMarket;
 import warframeRelics.pricing.WarframeMarket.Price;
@@ -57,6 +58,8 @@ public class WarframeRelicsController implements Initializable {
 	private ResolutionFile resolutionFile;
 	private ScreenResolution resolution;
 
+	private PricerFactory pricerFactory;
+	
 	@FXML
 	private GridPane table;
 	@FXML
@@ -71,7 +74,8 @@ public class WarframeRelicsController implements Initializable {
 		this.mainStage = stage;
 		this.database = dataBase;
 		this.resolutionFile = new ResolutionFile(getClass().getClassLoader().getResourceAsStream(resolutionFile));
-
+		pricerFactory = new PricerFactory(dataBase);
+		
 		try {
 			BufferedImageProvider prov;
 			if (fromFile == null) {
@@ -89,6 +93,8 @@ public class WarframeRelicsController implements Initializable {
 
 		prices = new ArrayList<>();
 		pricers = new LinkedHashMap<>();
+		pricers.put(pricerFactory.getNamePricer(), false);
+		pricers.put(pricerFactory.getWarframeMarketPricer(), false);
 	}
 
 	@Override
@@ -102,8 +108,8 @@ public class WarframeRelicsController implements Initializable {
 //		}
 		
 		List<Pricer> pricers = new ArrayList<>();
-		pricers.add(new NamePricer(database));
-		pricers.add(new WarframeMarketWrapper());
+		pricers.add(pricerFactory.getNamePricer());
+		pricers.add(pricerFactory.getWarframeMarketPricer());
 		setPriceDisplayers(pricers);
 	}
 

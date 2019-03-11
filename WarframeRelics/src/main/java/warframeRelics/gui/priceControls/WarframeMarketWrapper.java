@@ -11,7 +11,7 @@ public class WarframeMarketWrapper extends Pricer{
 
 	private WarframeMarket market;
 	
-	public WarframeMarketWrapper() {
+	WarframeMarketWrapper() {
 		this.market = new WarframeMarket();
 	}
 	

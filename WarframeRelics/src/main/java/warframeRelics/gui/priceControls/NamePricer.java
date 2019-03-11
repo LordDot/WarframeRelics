@@ -12,7 +12,7 @@ public class NamePricer extends Pricer{
 
 	private IDataBase database;
 	
-	public NamePricer(IDataBase database) {
+	NamePricer(IDataBase database) {
 		this.database = database;
 	}
 	
