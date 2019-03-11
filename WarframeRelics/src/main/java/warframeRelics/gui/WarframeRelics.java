@@ -45,7 +45,7 @@ public class WarframeRelics extends Application {
 		});
 
 		try {
-			database = new SQLLiteDataBase("DB_PATH");
+			database = new SQLLiteDataBase(DB_PATH);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			log.severe(e.toString());
