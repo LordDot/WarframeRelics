@@ -1,4 +1,4 @@
-package warframeRelics.gui;
+package warframeRelics.gui.priceControls;
 
 import java.io.IOException;
 

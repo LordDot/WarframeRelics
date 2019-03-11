@@ -37,6 +37,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import warframeRelics.dataBase.IDataBase;
 import warframeRelics.dataDownload.DataDownLoader;
+import warframeRelics.gui.priceControls.Pricer;
 import warframeRelics.screenCapture.ResolutionFile;
 import warframeRelics.screenCapture.ScreenResolution;
 

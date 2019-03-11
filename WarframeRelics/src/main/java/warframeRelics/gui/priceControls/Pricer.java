@@ -1,9 +1,10 @@
-package warframeRelics.gui;
+package warframeRelics.gui.priceControls;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
+import warframeRelics.gui.Util;
 
 public abstract class Pricer {
 	public abstract String getName();
