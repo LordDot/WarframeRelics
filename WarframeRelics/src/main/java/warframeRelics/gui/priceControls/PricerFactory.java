@@ -29,4 +29,13 @@ public class PricerFactory {
 	public Pricer get(String name) {
 		return pricers.get(name);
 	}
+	
+	public String getName(Pricer p) {
+		for(String s : pricers.keySet()) {
+			if(pricers.get(s).equals(p)) {
+				return s;
+			}
+		}
+		throw new IllegalArgumentException();
+	}
 }

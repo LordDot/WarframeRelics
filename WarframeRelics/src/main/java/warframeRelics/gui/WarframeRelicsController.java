@@ -5,9 +5,14 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -56,35 +61,54 @@ public class WarframeRelicsController implements Initializable {
 	private SQLLiteDataBase database;
 	private int debugImageCounter;
 	private ResolutionFile resolutionFile;
+	private SettingsFile settingsFile;
+	private String settingsPath;
 	private ScreenResolution resolution;
 
 	private PricerFactory pricerFactory;
-	
+
 	@FXML
 	private GridPane table;
 	@FXML
 	private Stage mainStage;
 
-//	private Label[] nameLabels;
+	// private Label[] nameLabels;
 	private List<Updatable<PriceDisplayer>[]> prices;
 
 	private Map<Pricer, Boolean> pricers;
 
-	public WarframeRelicsController(Stage stage, SQLLiteDataBase dataBase, String resolutionFile, String fromFile) {
+	public WarframeRelicsController(Stage stage, SQLLiteDataBase dataBase, String resolutionFile, String settingsFile,
+			String fromFile) {
 		this.mainStage = stage;
 		this.database = dataBase;
-		this.resolutionFile = new ResolutionFile(getClass().getClassLoader().getResourceAsStream(resolutionFile));
+		settingsPath = settingsFile;
+		try (InputStream in = getClass().getClassLoader().getResourceAsStream(resolutionFile);) {
+			this.resolutionFile = new ResolutionFile(in);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		pricerFactory = new PricerFactory(dataBase);
-		
+
+		if (new File(settingsFile).exists()) {
+			try (Reader in = new FileReader(settingsFile)) {
+				this.settingsFile = new SettingsFile(in);
+			} catch (IOException |NullPointerException e) {
+				e.printStackTrace();
+				this.settingsFile = new SettingsFile();
+			}
+		}else {
+			this.settingsFile = new SettingsFile();
+		}
+
 		try {
 			BufferedImageProvider prov;
+			resolution = this.resolutionFile.getFromString(this.settingsFile.getResolution());
 			if (fromFile == null) {
-				prov = new ScreenBufferedImageProvider(this.resolutionFile.getFromString("1920x1080"));
+				prov = new ScreenBufferedImageProvider(resolution);
 			} else {
 				prov = new FileImageProvider(new FileInputStream(fromFile));
 			}
-			relicReader = new RelicReader(dataBase, prov, this.resolutionFile.getFromString("1920x1080"));
-			resolution = this.resolutionFile.getFromString("1920x1080");
+			relicReader = new RelicReader(dataBase, prov, resolution);
 
 		} catch (AWTException | IOException e1) {
 			e1.printStackTrace();
@@ -99,17 +123,17 @@ public class WarframeRelicsController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-//		nameLabels = new Label[4];
-//		for (int i = 0; i < 4; i++) {
-//			nameLabels[i] = new Label();
-//			table.add(Util.stretch(nameLabels[i]), 0, i + 1);
-//			nameLabels[i].setAlignment(Pos.CENTER_RIGHT);
-//
-//		}
-		
+		// nameLabels = new Label[4];
+		// for (int i = 0; i < 4; i++) {
+		// nameLabels[i] = new Label();
+		// table.add(Util.stretch(nameLabels[i]), 0, i + 1);
+		// nameLabels[i].setAlignment(Pos.CENTER_RIGHT);
+		//
+		// }
+
 		List<Pricer> pricers = new ArrayList<>();
-		pricers.add(pricerFactory.getNamePricer());
-		pricers.add(pricerFactory.getWarframeMarketPricer());
+		for (String p : settingsFile.getPriceDisplayers())
+			pricers.add(pricerFactory.get(p));
 		setPriceDisplayers(pricers);
 	}
 
@@ -118,14 +142,14 @@ public class WarframeRelicsController implements Initializable {
 		for (int i = 0; i < pricers.size(); i++) {
 			Pricer p = pricers.get(i);
 			this.pricers.put(p, true);
-			
+
 			ColumnConstraints c = new ColumnConstraints();
 			c.setPercentWidth(p.getColumnWidth());
 			table.getColumnConstraints().add(c);
 			table.add(p.getHeader(), i, 0);
 
 			@SuppressWarnings("unchecked")
-			Updatable<PriceDisplayer>[] priceDisplayers = (Updatable<PriceDisplayer>[])new Updatable[4];
+			Updatable<PriceDisplayer>[] priceDisplayers = (Updatable<PriceDisplayer>[]) new Updatable[4];
 			for (int j = 0; j < 4; j++) {
 				priceDisplayers[j] = new Updatable<>(p.getPriceDisplayer());
 				table.add(priceDisplayers[j], i, j + 1);
@@ -134,14 +158,14 @@ public class WarframeRelicsController implements Initializable {
 		}
 		mainStage.sizeToScene();
 	}
-	
+
 	public void removePriceDisplayers() {
 		table.getChildren().clear();
 		table.getColumnConstraints().clear();
 		prices.clear();
-		this.pricers.forEach((p,b) -> pricers.put(p, false));
+		this.pricers.forEach((p, b) -> pricers.put(p, false));
 	}
-	
+
 	public void setResolution(ScreenResolution resolution) {
 		this.resolution = resolution;
 		try {
@@ -152,8 +176,8 @@ public class WarframeRelicsController implements Initializable {
 	}
 
 	public void readRewards() {
-		for(Updatable<PriceDisplayer>[] ua : prices) {
-			for(int i = 0; i < ua.length; i++) {
+		for (Updatable<PriceDisplayer>[] ua : prices) {
+			for (int i = 0; i < ua.length; i++) {
 				ua[i].setUpdating(true);
 			}
 		}
@@ -164,9 +188,9 @@ public class WarframeRelicsController implements Initializable {
 				for (i = 0; i < rewards.length; i++) {
 					int index = i;
 					for (Updatable<PriceDisplayer>[] pd : prices) {
-						new Thread(()->{
-						pd[index].getNode().setPrice(rewards[index]);
-						Platform.runLater(()-> pd[index].setUpdating(false));
+						new Thread(() -> {
+							pd[index].getNode().setPrice(rewards[index]);
+							Platform.runLater(() -> pd[index].setUpdating(false));
 						}).start();
 					}
 				}
@@ -174,7 +198,7 @@ public class WarframeRelicsController implements Initializable {
 					int index = i;
 					for (Updatable<PriceDisplayer>[] pd : prices) {
 						pd[index].getNode().setPrice(null);
-						Platform.runLater(()-> pd[index].setUpdating(false));
+						Platform.runLater(() -> pd[index].setUpdating(false));
 					}
 				}
 			} catch (TesseractException e1) {
@@ -217,13 +241,28 @@ public class WarframeRelicsController implements Initializable {
 			e.printStackTrace();
 			return;
 		}
-		
+
 		settings.setResolution(resolution);
 		settings.setPricers(pricers);
-		
-		if(settings.showAndWait()) {
-			setResolution(settings.getResolution());
-			setPriceDisplayers(settings.getSelectedPricers());
+
+		if (settings.showAndWait()) {
+			ScreenResolution res = settings.getResolution();
+			setResolution(res);
+			settingsFile.setResolution(res.name());
+
+			List<Pricer> priceDisplayers = settings.getSelectedPricers();
+			setPriceDisplayers(priceDisplayers);
+			List<String> pricerNames = new ArrayList<>();
+			for (Pricer p : priceDisplayers) {
+				pricerNames.add(pricerFactory.getName(p));
+			}
+			settingsFile.setPriceDisplayers(pricerNames);
+			try (Writer out = new FileWriter(settingsPath)) {
+				settingsFile.writeTo(out);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
