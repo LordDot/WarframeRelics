@@ -15,6 +15,7 @@ import com.google.gson.JsonParser;
 
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
+import warframeRelics.gui.WarframeRelics;
 
 public class ImageExtractor {
 	
@@ -78,7 +79,7 @@ public class ImageExtractor {
 		}
 		
 		Tesseract tess = new Tesseract();
-		tess.setDatapath("tessdata");
+		tess.setDatapath(WarframeRelics.TESSDATA_PATH);
 		tess.setTessVariable("load_system_dawg", "F");
 		tess.setTessVariable("load_freq_dawg", "F");
 		tess.setTessVariable("preserve_interword_spaces", "1");

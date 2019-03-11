@@ -45,7 +45,7 @@ public class WarframeRelics extends Application {
 		});
 
 		try {
-			database = new SQLLiteDataBase("./db.db");
+			database = new SQLLiteDataBase("DB_PATH");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			log.severe(e.toString());
@@ -71,7 +71,7 @@ public class WarframeRelics extends Application {
 
 		// rootLogger.setLevel(Level.FINEST);
 
-		FileHandler handler = new FileHandler("log.txt");
+		FileHandler handler = new FileHandler(LOG_PATH);
 		handler.setFormatter(new SimpleFormatter());
 		rootLogger.addHandler(handler);
 

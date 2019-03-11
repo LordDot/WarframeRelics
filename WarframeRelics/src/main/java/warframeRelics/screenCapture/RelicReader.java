@@ -9,6 +9,7 @@ import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import warframeRelics.dataBase.INameFixer;
 import warframeRelics.gui.Util;
+import warframeRelics.gui.WarframeRelics;
 
 public class RelicReader {
 
@@ -25,7 +26,7 @@ public class RelicReader {
 		imageExtractor = new ImageExtractor(resolution);
 
 		tess = new Tesseract();
-		tess.setDatapath("tessdata");
+		tess.setDatapath(WarframeRelics.TESSDATA_PATH);
 		tess.setTessVariable("tessedit_char_whitelist", "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 		tess.setTessVariable("load_system_dawg", "F");
 		tess.setTessVariable("load_freq_dawg", "F");
