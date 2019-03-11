@@ -18,7 +18,9 @@ pipelines:
         name: Deploy
         deployment: test
         trigger: manual
+        caches:
+          - gradle
         script:
-          - bash ./WarframeRelics/gradlew build
+          - bash ./WarframeRelics/gradlew distZip
           - echo "dist done"
           - curl -X POST --user "${BB_AUTH_STRING}" "https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"build/libs/WarframeRelics-1.0.jar"
