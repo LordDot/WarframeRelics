@@ -25,6 +25,11 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -54,7 +59,7 @@ import warframeRelics.screenCapture.ResolutionFile;
 import warframeRelics.screenCapture.ScreenBufferedImageProvider;
 import warframeRelics.screenCapture.ScreenResolution;
 
-public class WarframeRelicsController implements Initializable {
+public class WarframeRelicsController implements Initializable, NativeKeyListener {
 	private static final Logger log = Logger.getLogger(WarframeRelicsController.class.getName());
 
 	private RelicReader relicReader;
@@ -79,6 +84,11 @@ public class WarframeRelicsController implements Initializable {
 
 	public WarframeRelicsController(Stage stage, SQLLiteDataBase dataBase, String resolutionFile, String settingsFile,
 			String fromFile) {
+		try {
+			GlobalScreen.registerNativeHook();
+		} catch (NativeHookException e2) {
+			e2.printStackTrace();
+		}
 		this.mainStage = stage;
 		this.database = dataBase;
 		settingsPath = settingsFile;
@@ -92,11 +102,11 @@ public class WarframeRelicsController implements Initializable {
 		if (new File(settingsFile).exists()) {
 			try (Reader in = new FileReader(settingsFile)) {
 				this.settingsFile = new SettingsFile(in);
-			} catch (IOException |NullPointerException e) {
+			} catch (IOException | NullPointerException e) {
 				e.printStackTrace();
 				this.settingsFile = new SettingsFile();
 			}
-		}else {
+		} else {
 			this.settingsFile = new SettingsFile();
 		}
 
@@ -119,6 +129,7 @@ public class WarframeRelicsController implements Initializable {
 		pricers = new LinkedHashMap<>();
 		pricers.put(pricerFactory.getNamePricer(), false);
 		pricers.put(pricerFactory.getWarframeMarketPricer(), false);
+		GlobalScreen.addNativeKeyListener(this);
 	}
 
 	@Override
@@ -175,7 +186,12 @@ public class WarframeRelicsController implements Initializable {
 		}
 	}
 
-	public void readRewards() {
+	public void readRewardsCallback() {
+		readRewards(() -> {
+		});
+	}
+
+	public void readRewards(Runnable afterwards) {
 		for (Updatable<PriceDisplayer>[] ua : prices) {
 			for (int i = 0; i < ua.length; i++) {
 				ua[i].setUpdating(true);
@@ -201,6 +217,7 @@ public class WarframeRelicsController implements Initializable {
 						Platform.runLater(() -> pd[index].setUpdating(false));
 					}
 				}
+				afterwards.run();
 			} catch (TesseractException e1) {
 				e1.printStackTrace();
 				log.severe(e1.toString());
@@ -266,4 +283,32 @@ public class WarframeRelicsController implements Initializable {
 		}
 	}
 
+	@Override
+	public void nativeKeyTyped(NativeKeyEvent nativeEvent) {
+
+	}
+
+	@Override
+	public void nativeKeyPressed(NativeKeyEvent nativeEvent) {
+
+	}
+
+	@Override
+	public void nativeKeyReleased(NativeKeyEvent nativeEvent) {
+		log.info("Key Pressed" + nativeEvent.getKeyCode());
+		if(nativeEvent.getKeyCode() == NativeKeyEvent.VC_K) {
+			readRewards(()->{
+				Platform.runLater(()->mainStage.setAlwaysOnTop(true));
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				Platform.runLater(()->{
+					mainStage.setAlwaysOnTop(false);
+					mainStage.toBack();
+				});
+			});
+		}
+	}
 }

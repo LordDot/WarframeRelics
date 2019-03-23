@@ -7,6 +7,9 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+
 import javafx.application.Application;
 import javafx.application.Application.Parameters;
 import javafx.fxml.FXMLLoader;
@@ -19,7 +22,7 @@ import warframeRelics.dataBase.SQLLiteDataBase;
 
 public class WarframeRelics extends Application {
 
-	public static final String VERSION = "1.5.0.0";
+	public static final String VERSION = "1.6.0.0";
 	public static final String TESSDATA_PATH = "./tessdata";
 	public static final String DB_PATH = "./db.db";
 	public static final String LOG_PATH = "./log.txt";
@@ -38,9 +41,13 @@ public class WarframeRelics extends Application {
 			if (database != null) {
 				try {
 					database.close();
+					GlobalScreen.unregisterNativeHook();
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 					log.severe(e.toString());
+				} catch (NativeHookException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 			}
 		});
