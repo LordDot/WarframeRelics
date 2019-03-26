@@ -295,7 +295,6 @@ public class WarframeRelicsController implements Initializable, NativeKeyListene
 
 	@Override
 	public void nativeKeyReleased(NativeKeyEvent nativeEvent) {
-		log.info("Key Pressed" + nativeEvent.getKeyCode());
 		if(nativeEvent.getKeyCode() == NativeKeyEvent.VC_K) {
 			readRewards(()->{
 				Platform.runLater(()->mainStage.setAlwaysOnTop(true));

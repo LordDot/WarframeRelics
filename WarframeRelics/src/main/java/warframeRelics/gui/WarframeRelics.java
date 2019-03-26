@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
@@ -22,7 +23,7 @@ import warframeRelics.dataBase.SQLLiteDataBase;
 
 public class WarframeRelics extends Application {
 
-	public static final String VERSION = "1.6.0.0";
+	public static final String VERSION = "1.6.1.0";
 	public static final String TESSDATA_PATH = "./tessdata";
 	public static final String DB_PATH = "./db.db";
 	public static final String LOG_PATH = "./log.txt";
@@ -77,7 +78,8 @@ public class WarframeRelics extends Application {
 
 		Logger rootLogger = Logger.getLogger("warframeRelics");
 
-		// rootLogger.setLevel(Level.FINEST);
+		Logger.getLogger("org.jnativehook").setFilter((l)-> false);
+		rootLogger.setLevel(Level.FINEST);
 
 		FileHandler handler = new FileHandler(LOG_PATH);
 		handler.setFormatter(new SimpleFormatter());
