@@ -69,6 +69,8 @@ public class WarframeRelicsController implements Initializable, NativeKeyListene
 	private SettingsFile settingsFile;
 	private String settingsPath;
 	private ScreenResolution resolution;
+	private int readRewardsHotkey;
+	private float onTopTime;
 
 	private PricerFactory pricerFactory;
 
@@ -125,6 +127,9 @@ public class WarframeRelicsController implements Initializable, NativeKeyListene
 			log.severe(e1.toString());
 		}
 
+		readRewardsHotkey = this.settingsFile.getReadRewardsHotkey();
+		onTopTime = this.settingsFile.getOnTopTime();
+		
 		prices = new ArrayList<>();
 		pricers = new LinkedHashMap<>();
 		pricers.put(pricerFactory.getNamePricer(), false);
@@ -134,14 +139,6 @@ public class WarframeRelicsController implements Initializable, NativeKeyListene
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// nameLabels = new Label[4];
-		// for (int i = 0; i < 4; i++) {
-		// nameLabels[i] = new Label();
-		// table.add(Util.stretch(nameLabels[i]), 0, i + 1);
-		// nameLabels[i].setAlignment(Pos.CENTER_RIGHT);
-		//
-		// }
-
 		List<Pricer> pricers = new ArrayList<>();
 		for (String p : settingsFile.getPriceDisplayers())
 			pricers.add(pricerFactory.get(p));
@@ -187,8 +184,7 @@ public class WarframeRelicsController implements Initializable, NativeKeyListene
 	}
 
 	public void readRewardsCallback() {
-		readRewards(() -> {
-		});
+		readRewards(() -> {});
 	}
 
 	public void readRewards(Runnable afterwards) {
@@ -261,7 +257,11 @@ public class WarframeRelicsController implements Initializable, NativeKeyListene
 
 		settings.setResolution(resolution);
 		settings.setPricers(pricers);
+		settings.setOnTopTime(onTopTime);
+		settings.setReadRewardsHotKey(readRewardsHotkey);
 
+		readRewardsHotkey = -1;
+		
 		if (settings.showAndWait()) {
 			ScreenResolution res = settings.getResolution();
 			setResolution(res);
@@ -274,6 +274,13 @@ public class WarframeRelicsController implements Initializable, NativeKeyListene
 				pricerNames.add(pricerFactory.getName(p));
 			}
 			settingsFile.setPriceDisplayers(pricerNames);
+			
+			onTopTime = settings.getOnTopTime();
+			settingsFile.setOnTopTime(onTopTime);
+			
+			readRewardsHotkey = settings.getRewardsHotKey();
+			settingsFile.setReadRewardsHotkey(readRewardsHotkey);
+			
 			try (Writer out = new FileWriter(settingsPath)) {
 				settingsFile.writeTo(out);
 			} catch (IOException e) {
@@ -295,11 +302,11 @@ public class WarframeRelicsController implements Initializable, NativeKeyListene
 
 	@Override
 	public void nativeKeyReleased(NativeKeyEvent nativeEvent) {
-		if(nativeEvent.getKeyCode() == NativeKeyEvent.VC_K) {
+		if(nativeEvent.getKeyCode() == readRewardsHotkey) {
 			readRewards(()->{
 				Platform.runLater(()->mainStage.setAlwaysOnTop(true));
 				try {
-					Thread.sleep(5000);
+					Thread.sleep((long) (onTopTime*1000));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

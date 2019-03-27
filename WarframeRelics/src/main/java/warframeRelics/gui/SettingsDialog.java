@@ -13,10 +13,14 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
+
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDialog;
-import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXDialog.DialogTransition;
 import com.jfoenix.controls.JFXSpinner;
 
@@ -25,13 +29,16 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -41,7 +48,7 @@ import warframeRelics.gui.priceControls.Pricer;
 import warframeRelics.screenCapture.ResolutionFile;
 import warframeRelics.screenCapture.ScreenResolution;
 
-public class SettingsDialog implements Initializable {
+public class SettingsDialog implements Initializable ,NativeKeyListener{
 
 	private static final Logger log = Logger.getLogger(SettingsDialog.class.getName());
 
@@ -55,11 +62,17 @@ public class SettingsDialog implements Initializable {
 	@FXML
 	private JFXCheckBox warframeMarketCheckBox;
 	private JFXDialog loadingDialog;
+	private JFXDialog pressAKeyDialog;
 	@FXML
 	private StackPane stackPane;
 	@FXML
 	private VBox pricerVBox;
+	@FXML
+	private JFXButton hotkeyButton;
+	@FXML
+	private Spinner<Double> timeOnTopSpinner;
 	private Map<JFXCheckBox, Pricer> pricerCheckBoxes;
+	private int hotkey;
 
 	public SettingsDialog(Stage parentStage, IDataBase database, ResolutionFile resolutionFile) throws IOException {
 		this.database = database;
@@ -71,6 +84,8 @@ public class SettingsDialog implements Initializable {
 		Parent root = loader.load();
 		scene = new Scene(root);
 		stage.setScene(scene);
+		stage.sizeToScene();
+		stage.setResizable(false);
 		stage.initOwner(parentStage);
 		stage.initModality(Modality.APPLICATION_MODAL);
 
@@ -96,6 +111,13 @@ public class SettingsDialog implements Initializable {
 		spinner.setMaxSize(75, 75);
 		stackPane.getChildren().add(spinner);
 		loadingDialog = new JFXDialog(this.stackPane, stackPane, DialogTransition.CENTER);
+		loadingDialog.setOverlayClose(false);
+		Label label = new Label("Press A Key");
+		label.setFont(new Font("System", 16));
+		label.setPrefSize(175, 125);
+		label.setAlignment(Pos.CENTER);
+		pressAKeyDialog = new JFXDialog(this.stackPane, label, DialogTransition.CENTER);
+		pressAKeyDialog.setOverlayClose(false);
 	}
 
 	public void setPricers(Map<Pricer, Boolean> pricers) {
@@ -186,6 +208,44 @@ public class SettingsDialog implements Initializable {
 				Platform.runLater(() -> loadingDialog.close());
 			}
 		}).start();
+	}
+
+	@FXML
+	private void changeHotKey() {
+		GlobalScreen.addNativeKeyListener(this);
+		pressAKeyDialog.show(stackPane);
+	}
+	
+	public void setOnTopTime(float onTopTime) {
+		timeOnTopSpinner.getValueFactory().setValue((double)onTopTime);
+	}
+
+	public void setReadRewardsHotKey(int readRewardsHotkey) {
+		hotkeyButton.setText(NativeKeyEvent.getKeyText(readRewardsHotkey));
+		hotkey = readRewardsHotkey;
+	}
+
+	public float getOnTopTime() {
+		return timeOnTopSpinner.getValue().floatValue();
+	}
+
+	public int getRewardsHotKey() {
+		return hotkey;
+	}
+
+	@Override
+	public void nativeKeyTyped(NativeKeyEvent nativeEvent) {
+	}
+
+	@Override
+	public void nativeKeyPressed(NativeKeyEvent nativeEvent) {
+		GlobalScreen.removeNativeKeyListener(this);
+		Platform.runLater(()->setReadRewardsHotKey(nativeEvent.getKeyCode()));
+		pressAKeyDialog.close();
+	}
+
+	@Override
+	public void nativeKeyReleased(NativeKeyEvent nativeEvent) {
 	}
 
 }

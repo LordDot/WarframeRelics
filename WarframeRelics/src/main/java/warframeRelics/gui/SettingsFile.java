@@ -1,11 +1,11 @@
 package warframeRelics.gui;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jnativehook.keyboard.NativeKeyEvent;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -18,6 +18,8 @@ import warframeRelics.gui.priceControls.PricerFactory;
 public class SettingsFile {
 	private String resolution;
 	private List<String> priceDisplayers;
+	private int readRewardsHotkey;
+	private float onTopTime;
 	
 	public SettingsFile(Reader in) {
 		JsonParser parser = new JsonParser();
@@ -28,6 +30,9 @@ public class SettingsFile {
 		for(JsonElement e : arr) {
 			priceDisplayers.add(e.getAsString());
 		}
+		
+		readRewardsHotkey = root.get("readRewardsHotkey").getAsInt();
+		onTopTime = root.get("onTopTime").getAsFloat();
 	}
 	
 	public SettingsFile() {
@@ -35,6 +40,8 @@ public class SettingsFile {
 		priceDisplayers = new ArrayList<>();
 		priceDisplayers.add(PricerFactory.NAME);
 		priceDisplayers.add(PricerFactory.WARFRAME_MARKET);
+		readRewardsHotkey = NativeKeyEvent.VC_K;
+		onTopTime = 5;
 	}
 
 	public String getResolution() {
@@ -61,8 +68,27 @@ public class SettingsFile {
 			arr.add(s);
 		}
 		root.add("priceDisplayers", arr);
+		root.addProperty("readRewardsHotkey", readRewardsHotkey);
+		root.addProperty("onTopTime", onTopTime);
 		Gson gson = new Gson();
 		gson.toJson(root, out);
 	}
+
+	public int getReadRewardsHotkey() {
+		return readRewardsHotkey;
+	}
+	
+	public float getOnTopTime() {
+		return onTopTime;
+	}
+
+	public void setReadRewardsHotkey(int readRewardsHotkey) {
+		this.readRewardsHotkey = readRewardsHotkey;
+	}
+
+	public void setOnTopTime(float onTopTime) {
+		this.onTopTime = onTopTime;
+	}
+	
 	
 }
