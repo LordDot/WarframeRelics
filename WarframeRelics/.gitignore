@@ -9,3 +9,5 @@ log.txt*
 /tessdata/
 *.png
 !/src/test/resources/**/*.png
+.classpath
+.project
