@@ -9,5 +9,12 @@ log.txt*
 /tessdata/
 *.png
 !/src/test/resources/**/*.png
+*.jpg
+!/src/test/resources/**/*.jpg
 .classpath
 .project
+/gradle/
+/out/
+*.iml
+/.idea/
+settings.json

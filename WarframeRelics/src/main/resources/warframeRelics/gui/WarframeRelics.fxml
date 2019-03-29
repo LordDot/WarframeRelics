@@ -34,9 +34,9 @@
                   <Separator orientation="VERTICAL" prefHeight="200.0" />
                   <VBox alignment="BOTTOM_RIGHT" spacing="5.0">
                      <children>
-                        <JFXButton buttonType="RAISED" focusTraversable="false" minWidth="100.0" mnemonicParsing="false" onAction="#readRewardsCallback" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffaf3f;" text="Read Rewards" />
-                        <JFXButton focusTraversable="false" minWidth="100.0" mnemonicParsing="false" onAction="#takeScreenshot" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffffff" text="Take Screenshot" />
-                        <JFXButton focusTraversable="false" minWidth="100.0" onAction="#openSettings" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffffff;" text="Settings" />
+                        <JFXButton fx:id="readRewardsButton" buttonType="RAISED" focusTraversable="false" minWidth="100.0" mnemonicParsing="false" onAction="#readRewardsCallback" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffaf3f;" text="Read Rewards" />
+                        <JFXButton fx:id="screenshotButton" focusTraversable="false" minWidth="100.0" mnemonicParsing="false" onAction="#takeScreenshot" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffffff" text="Take Screenshot" />
+                        <JFXButton fx:id="settingsButton" focusTraversable="false" minWidth="100.0" onAction="#openSettings" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: #ffffff;" text="Settings" />
                      </children>
                      <opaqueInsets>
                         <Insets />
