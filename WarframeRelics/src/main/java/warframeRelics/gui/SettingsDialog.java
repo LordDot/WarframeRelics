@@ -176,7 +176,7 @@ public class SettingsDialog implements Initializable ,NativeKeyListener{
 				DataDownLoader dl = new DataDownLoader(database);
 				Set<String> wordList = null;
 				try {
-					wordList = dl.downLoadPartData();
+					wordList = dl.downloadData();
 				} finally {
 					database.setFastMode(false);
 				}
@@ -191,12 +191,6 @@ public class SettingsDialog implements Initializable ,NativeKeyListener{
 						out.append(s);
 						out.append("\n");
 					}
-				}
-				database.setFastMode(true);
-				try {
-					dl.downloadMissionData();
-				} finally {
-					database.setFastMode(false);
 				}
 			} catch (SQLException e1) {
 				e1.printStackTrace();

@@ -1,9 +1,8 @@
 package warframeRelics.gui.priceControls;
 
-import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
+import warframeRelics.beans.PrimeItem;
 
 public abstract class PriceDisplayer extends AnchorPane{
-	public abstract void setPrice(String itemName);
+	public abstract void setPrice(PrimeItem item);
 }

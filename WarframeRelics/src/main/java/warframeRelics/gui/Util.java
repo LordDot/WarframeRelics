@@ -35,22 +35,6 @@ public class Util {
 		return distances[first.length()][second.length()];
 	}
 	
-	public static int convertFissureNameToInt(String tierName) throws IOException {
-		int tier;
-		if (tierName.equals("Lith")) {
-			tier = SQLLiteDataBase.LITH;
-		} else if (tierName.equals("Meso")) {
-			tier = SQLLiteDataBase.MESO;
-		} else if (tierName.equals("Neo")) {
-			tier = SQLLiteDataBase.NEO;
-		} else if (tierName.equals("Axi")) {
-			tier = SQLLiteDataBase.AXI;
-		} else {
-			throw new IOException("Unknown relicType");
-		}
-		return tier;
-	}
-	
 	public static Parent stretch(Node node) {
 		AnchorPane ret = new AnchorPane();	
 		AnchorPane.setTopAnchor(node, 0d);

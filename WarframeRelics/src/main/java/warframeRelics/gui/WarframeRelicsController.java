@@ -44,6 +44,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import net.sourceforge.tess4j.TesseractException;
+import warframeRelics.beans.PrimeItem;
 import warframeRelics.dataBase.SQLLiteDataBase;
 import warframeRelics.dataDownload.DataDownLoader;
 import warframeRelics.gui.priceControls.NamePricer;
@@ -206,7 +207,7 @@ public class WarframeRelicsController implements Initializable, NativeKeyListene
         }
         new Thread(() -> {
             try {
-                String[] rewards = relicReader.readRelics();
+                PrimeItem[] rewards = relicReader.readRelics();
                 int i;
                 for (i = 0; i < rewards.length; i++) {
                     int index = i;
