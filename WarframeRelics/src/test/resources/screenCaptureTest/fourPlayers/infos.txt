@@ -1,7 +1,0 @@
-image000.png, Oberon Prime Chassis Blueprint, Forma Blueprint, Silva & Aegis Prime Blueprint, Kronen Prime Handle
-image001.png, Forma Blueprint, Fang Prime Blueprint, Forma Blueprint, Forma Blueprint
-image002.png, Oberon Prime Blueprint, Fang Prime Handle, Ballistica Prime Lower Limb, Oberon Prime Neuroptics Blueprint
-image003.png, Limbo Prime Systems Blueprint, Akbronco Prime Blueprint, Fang Prime Blueprint, Orthos Prime Blueprint
-image004.png, Braton Prime Barrel, Fang Prime Handle, Akbolto Prime Barrel, Braton Prime Stock
-image005.png, Silva & Aegis Prime Hilt, Fang Prime Handle, Forma Blueprint, Paris Prime Lower Limb
-image006.png, Forma Blueprint, Fang Prime Handle, Rubico Prime Receiver, Forma Blueprint
