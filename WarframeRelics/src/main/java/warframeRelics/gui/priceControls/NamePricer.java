@@ -13,7 +13,8 @@ public class NamePricer extends Pricer {
 
     private IDataBase database;
 
-    NamePricer(IDataBase database) {
+    NamePricer(String id, IDataBase database) {
+        super(id);
         this.database = database;
     }
 

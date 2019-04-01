@@ -7,6 +7,16 @@ import javafx.scene.text.Font;
 import warframeRelics.gui.Util;
 
 public abstract class Pricer {
+	private String id;
+
+	public Pricer(String id) {
+		this.id = id;
+	}
+
+	public final String getId() {
+		return id;
+	}
+
 	public abstract String getName();
 	
 	public Node getHeader() {
