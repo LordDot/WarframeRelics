@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
+import warframeRelics.beans.PrimeItem;
 import warframeRelics.dataBase.INameFixer;
 import warframeRelics.gui.Util;
 import warframeRelics.gui.WarframeRelics;
@@ -39,7 +40,7 @@ public class RelicReader {
 	}
 
 	
-	public String[] readRelics() throws Exception {
+	public PrimeItem[] readRelics() throws Exception {
 		// TODO Prime is always in first line
 		BufferedImage[] images = imageExtractor.extractRelics(bip.getImage());
 
@@ -58,17 +59,18 @@ public class RelicReader {
 			}
 		}
 
-		String[] ret = new String[images.length];
+		String[] readNames = new String[images.length];
+		PrimeItem[] ret = new PrimeItem[images.length];
 		for (int i = 0; i < images.length; i++) {
 			String read = tess.doOCR(images[i]);
 			log.info("read " + read);
 			String[] split = read.split("\n");
 			if (Util.stringDifference(split[split.length - 1].replaceAll(" ", ""), "BLUEPRINT") < 4) {
-				ret[i] = split[split.length - 2] + split[split.length - 1];
+				readNames[i] = split[split.length - 2] + split[split.length - 1];
 			} else {
-				ret[i] = split[split.length - 1];
+				readNames[i] = split[split.length - 1];
 			}
-			ret[i] = dataBase.getNearestItemName(ret[i]);
+			ret[i] = dataBase.getNearestItemName(readNames[i]);
 		}
 		return ret;
 	}

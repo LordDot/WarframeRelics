@@ -1,5 +1,7 @@
 package warframeRelics.dataBase;
 
+import warframeRelics.beans.PrimeItem;
+
 public interface INameFixer {
-	public String getNearestItemName(String name) throws RuntimeException;
+	public PrimeItem getNearestItemName(String name) throws RuntimeException;
 }

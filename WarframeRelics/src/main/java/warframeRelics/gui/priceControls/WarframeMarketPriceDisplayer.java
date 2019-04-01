@@ -10,6 +10,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
+import warframeRelics.beans.PrimeItem;
 import warframeRelics.pricing.WarframeMarket;
 import warframeRelics.pricing.WarframeMarket.Price;
 
@@ -92,10 +93,10 @@ public class WarframeMarketPriceDisplayer extends PriceDisplayer {
 	}
 
 	@Override
-	public void setPrice(String itemName) {
+	public void setPrice(PrimeItem item) {
 		try {
-			if (itemName != null && !itemName.equals("Forma Blueprint")) {
-				setPrice(pricer.getPlat(itemName));
+			if (item != null && !item.equals("Forma Blueprint")) {
+				setPrice(pricer.getPlat(item.getDisplayName()));
 			} else {
 				setPrice((Price) null);
 			}

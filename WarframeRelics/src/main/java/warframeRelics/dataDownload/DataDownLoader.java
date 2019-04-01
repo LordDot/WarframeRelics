@@ -6,9 +6,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
+import java.util.logging.Logger;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -20,156 +19,144 @@ import warframeRelics.dataBase.SQLLiteDataBase;
 import warframeRelics.gui.Util;
 
 public class DataDownLoader {
-	private static final String RELIC_URL = "https://drops.warframestat.us/data/relics.json";
-	private static final String MISSION_URL = "https://drops.warframestat.us/data/missionRewards.json";
+    private static Logger log = Logger.getLogger(DataDownLoader.class.getName());
 
-	private IDataBase database;
+    private static final String WARFRAME_DROP_DATA = "https://drops.warframestat.us/data/relics.json";
+    private static final String[] WARFRAME_ITEMS = {"https://raw.githubusercontent.com/WFCD/warframe-items/development/data/json/Primary.json", "https://raw.githubusercontent.com/WFCD/warframe-items/development/data/json/Archwing.json", "https://raw.githubusercontent.com/WFCD/warframe-items/development/data/json/Melee.json", "https://raw.githubusercontent.com/WFCD/warframe-items/development/data/json/Secondary.json", "https://raw.githubusercontent.com/WFCD/warframe-items/development/data/json/Sentinels.json", "https://raw.githubusercontent.com/WFCD/warframe-items/development/data/json/Warframes.json"};
+    private static final String WARFRAME_ITEMS_ALL = "https://raw.githubusercontent.com/WFCD/warframe-items/development/data/json/All.json";
 
-	public DataDownLoader(IDataBase database) {
-		this.database = database;
-	}
+    private IDataBase database;
 
-	public Set<String> downLoadPartData() throws IOException, SQLException {
-		URLConnection url = new URL(RELIC_URL).openConnection();
-		url.addRequestProperty("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
-		java.io.InputStream ips = url.getInputStream();
+    public DataDownLoader(IDataBase database) {
+        this.database = database;
+    }
 
-		StringBuilder builder = new StringBuilder();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(ips));
-		String line;
-		while ((line = reader.readLine()) != null) {
-			builder.append(line);
-		}
+    public Set<String> downloadData() throws IOException, SQLException {
+        Set<String> ret = new HashSet<>();
+        List<String> displayNames = new ArrayList<>();
 
-		Set<String> ret = new HashSet<>();
-		
-		JsonParser parser = new JsonParser();
-		JsonArray list = parser.parse(builder.toString()).getAsJsonObject().get("relics").getAsJsonArray();
-		for (Iterator<JsonElement> i = list.iterator(); i.hasNext();) {
-			JsonObject relic = (JsonObject) i.next();
-			if (relic.get("state").getAsString().equals("Intact")) {
-				addRelic(relic, ret);
-			}
-		}
-		return ret;
-	}
+        log.info("pulling data form warframe-drop-data");
+        URLConnection warframeDropData = new URL(WARFRAME_DROP_DATA).openConnection();
+        warframeDropData.addRequestProperty("User-Agent",
+                "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
+        JsonArray dropDataList = null;
 
-	private void addRelic(JsonObject relic, Set<String> wordList) throws IOException, SQLException {
-		String tierName = relic.get("tier").getAsString();
-		int tier = Util.convertFissureNameToInt(tierName);
+        try (InputStreamReader ipsr = new InputStreamReader(warframeDropData.getInputStream());) {
+            JsonParser parser = new JsonParser();
+            dropDataList = parser.parse(ipsr).getAsJsonObject().get("relics").getAsJsonArray();
+        }
 
-		String relicName = relic.get("relicName").getAsString();
-		database.addRelic(tier, relicName);
+        for(JsonElement e : dropDataList){
+            JsonObject o = e.getAsJsonObject();
+            if(o.get("state").getAsString().equals("Intact")){
+                JsonArray rewards = o.get("rewards").getAsJsonArray();
+                for(JsonElement rewardelement : rewards){
+                    JsonObject reward = rewardelement.getAsJsonObject();
+                    String itemName = reward.get("itemName").getAsString();
+                    displayNames.add(itemName);
+                    ret.addAll(Arrays.asList(itemName.split(" ")));
+                }
+            }
+        }
 
-		System.out.println(tierName + " " + relicName);
 
-		
-		JsonArray rewards = relic.get("rewards").getAsJsonArray();
-		for (Iterator<JsonElement> i = rewards.iterator(); i.hasNext();) {
-			JsonObject reward = i.next().getAsJsonObject();
-			String itemName = reward.get("itemName").getAsString();
-			try {
-				database.addItem(itemName);
-			} catch (SQLException e) {
+        log.info("pulling data from warframe-items");
+        for(int i = 0; i < WARFRAME_ITEMS.length; i++){
 
-			}
-			String[] words = itemName.split(" ");
-			for(int j = 0; j < words.length;j++) {
-				wordList.add(words[j]);
-			}
-			
-			int rarity;
-			double dropChance = reward.get("chance").getAsDouble();
-			if (dropChance == 25.33) {
-				rarity = SQLLiteDataBase.BRONZE;
-			} else if (dropChance == 11) {
-				rarity = SQLLiteDataBase.SILVER;
-			} else if (dropChance == 2) {
-				rarity = SQLLiteDataBase.GOLD;
-			} else {
-				throw new IOException("Unknow rarity");
-			}
-			database.addDrop(itemName, tier, relicName, rarity);
-		}
-	}
+            URLConnection warframeItems = new URL(WARFRAME_ITEMS[i]).openConnection();
 
-	public void downloadMissionData() throws IOException, SQLException {
-		URLConnection url = new URL(MISSION_URL).openConnection();
-		url.addRequestProperty("User-Agent",
-				"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
-		java.io.InputStream ips = url.getInputStream();
+            JsonArray itemsList = null;
 
-		StringBuilder builder = new StringBuilder();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(ips));
-		String line;
-		while ((line = reader.readLine()) != null) {
-			builder.append(line);
-		}
+            try (InputStreamReader ipsr = new InputStreamReader(warframeItems.getInputStream());) {
+                JsonParser parser = new JsonParser();
+                itemsList = parser.parse(ipsr).getAsJsonArray();
+            }
 
-		JsonParser parser = new JsonParser();
-		JsonObject missions = parser.parse(builder.toString()).getAsJsonObject().get("missionRewards")
-				.getAsJsonObject();
-		for (String planetName : missions.keySet()) {
-			JsonObject planet = missions.get(planetName).getAsJsonObject();
-			for (String missionName : planet.keySet()) {
-				System.out.println(planetName + "/" + missionName);
-				if (!missionName.contains("The Index")) {
-					handleMission(planet.get(missionName).getAsJsonObject());
-				}
-			}
-		}
+            for (JsonElement e : itemsList) {
+                JsonObject equipment = e.getAsJsonObject();
+                handleEquipmentItem(displayNames, equipment);
+            }
+        }
 
-		database.updateItemData();
-	}
+        URLConnection warframeItems = new URL(WARFRAME_ITEMS_ALL).openConnection();
 
-	private void handleMission(JsonObject mission) throws IOException, SQLException {
-		if (mission.get("isEvent").getAsBoolean()) {
-			return;
-		}
+        JsonArray objects = null;
+        try (InputStreamReader ipsr = new InputStreamReader(warframeItems.getInputStream());) {
+            JsonParser parser = new JsonParser();
+            objects = parser.parse(ipsr).getAsJsonArray();
+        }
+        for(JsonElement e: objects){
+            JsonObject o = e.getAsJsonObject();
+            if(o.has("name") && o.get("name").getAsString().equals("Kavasa Prime Kubrow Collar")){
+                JsonArray components = o.get("components").getAsJsonArray();
+                for(JsonElement componentElement: components){
+                    JsonObject component = componentElement.getAsJsonObject();
+                    String name = component.get("name").getAsString();
+                    String nameGuess;
+                    if(name.equals("Blueprint")){
+                        nameGuess = "Kavasa Prime Kubrow Collar Blueprint";
+                    }else{
+                        nameGuess = name;
+                    }
+                    String displayName = null;
+                    for(String s: displayNames){
+                        if(nameGuess.equals(s)){
+                            displayName = nameGuess;
+                            break;
+                        }
+                    }
+                    if(displayName == null){
+                        throw new RuntimeException("could not find displayname for item " + nameGuess);
+                    }
+                    String uniqueName = component.get("uniqueName").getAsString();
+                    boolean vaulted = true;
+                    if (component.has("vaulted")) {
+                        vaulted = o.get("vaulted").getAsString().equals(true);
+                    }
+                    database.addItem(uniqueName,displayName,vaulted);
+                }
+            }
+        }
 
-		String missionType = mission.get("gameMode").getAsString();
-		if (missionType.equals("Survival") || missionType.equals("Defense") || missionType.equals("Rescue")
-				|| missionType.equals("Caches") || missionType.equals("Interception") || missionType.equals("Spy")
-				|| missionType.equals("Excavation") || missionType.equals("Conclave") || missionType.equals("Defection")
-				|| missionType.equals("Infested Salvage") || missionType.equals("Rush")
-				|| missionType.equals("Sanctuary Onslaught")) {
-			handleABCMission(mission);
-		} else if (missionType.equals("Capture") || missionType.equals("Exterminate")
-				|| missionType.equals("Assassination") || missionType.equals("Mobile Defense")
-				|| missionType.equals("Sabotage") || missionType.equals("Pursuit") || missionType.equals("Arena")) {
-			handleAMission(mission);
-		} else {
-			throw new IOException("Unknown Missiontype: " + missionType);
-		}
-	}
+        return ret;
+    }
 
-	private void handleABCMission(JsonObject mission) throws IOException, SQLException {
-		JsonObject rewards = mission.get("rewards").getAsJsonObject();
-		for (String rotationName : rewards.keySet()) {
-			JsonArray rotation = rewards.get(rotationName).getAsJsonArray();
-			for (JsonElement e : rotation) {
-				String name = e.getAsJsonObject().get("itemName").getAsString();
-				if (name.contains("Relic")) {
-					setRelicUnvaulted(name);
-				}
-			}
-		}
-	}
+    private void handleEquipmentItem(List<String> displayNames, JsonObject equipment) throws SQLException {
+        String equipmentName = equipment.get("name").getAsString();
+        log.info("Handling " + equipmentName);
+        if(equipmentName.toLowerCase().contains("prime")){
+            if(equipment.has("components")) {
+                JsonArray components = equipment.get("components").getAsJsonArray();
+                for (JsonElement componentElement : components) {
+                    JsonObject component = componentElement.getAsJsonObject();
+                    String componentName = component.get("name").getAsString();
+                    if (!componentName.toLowerCase().contains("cell") && !componentName.toLowerCase().contains("extract")) {
+                        if (!(equipmentName.startsWith("Ak") && componentName.toLowerCase().contains(equipmentName.split(" ")[0].substring(2)))) {
+                            String displayNameGuess = equipmentName + " " + componentName;
+                            String displayName = null;
+                            for (String s : displayNames) {
+                                if (displayNameGuess.equals(s)) {
+                                    displayName = displayNameGuess;
+                                    break;
+                                } else if (s.equals(displayNameGuess + " Blueprint")) {
+                                    displayName = displayNameGuess + " Blueprint";
+                                    break;
+                                }
+                            }
+                            if (displayName == null) {
+                                throw new RuntimeException("could not find displayname for item " + displayNameGuess);
+                            }
 
-	private void handleAMission(JsonObject mission) throws IOException, SQLException {
-		JsonArray rotation = mission.get("rewards").getAsJsonArray();
-		for (JsonElement e : rotation) {
-			String name = e.getAsJsonObject().get("itemName").getAsString();
-			if (name.contains("Relic")) {
-				setRelicUnvaulted(name);
-			}
-		}
-	}
-
-	private void setRelicUnvaulted(String name) throws IOException, SQLException {
-		String[] split = name.split(" ");
-		int tier = Util.convertFissureNameToInt(split[0]);
-		database.setRelicVaulted(tier, split[1], false);
-	}
+                            String uniqueName = component.get("uniqueName").getAsString();
+                            boolean vaulted = true;
+                            if (component.has("vaulted")) {
+                                vaulted = equipment.get("vaulted").getAsString().equals(true);
+                            }
+                            database.addItem(uniqueName, displayName, vaulted);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
