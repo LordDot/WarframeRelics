@@ -13,106 +13,106 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="500.0" prefWidth="220.0" xmlns="http://javafx.com/javafx/8.0.1" xmlns:fx="http://javafx.com/fxml/1">
-	<children>
-		<StackPane fx:id="stackPane" prefHeight="434.0" prefWidth="220.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
-			<children>
-				<AnchorPane prefHeight="500.0" prefWidth="220.0">
-					<children>
-						<VBox layoutY="-5.0" prefHeight="500.0" prefWidth="220.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-							<children>
-								<VBox spacing="5.0">
-									<children>
-										<Label text="ScreenResolution">
-											<font>
-												<Font size="16.0" />
-											</font>
-										</Label>
-										<AnchorPane>
-											<children>
-												<JFXComboBox fx:id="resolutionComboBox" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-											</children>
-										</AnchorPane>
-									</children>
-								</VBox>
-								<Separator prefWidth="200.0" />
-								<VBox fx:id="pricerVBox" spacing="5.0">
-									<children>
-										<Label text="Displayed Values">
-											<font>
-												<Font size="16.0" />
-											</font>
-										</Label>
-									</children>
-								</VBox>
-								<Separator prefWidth="200.0" />
-								<VBox>
-									<children>
-										<Label text="Trigger By Hotkey">
-											<font>
-												<Font size="16.0" />
-											</font>
-										</Label>
-										<AnchorPane>
-											<children>
-												<Label text="Hotkey" AnchorPane.leftAnchor="0.0">
-													<font>
-														<Font size="14.0" />
-													</font>
-													<padding>
-														<Insets bottom="5.0" top="5.0" />
-													</padding>
-												</Label>
-												<JFXButton fx:id="hotkeyButton" layoutX="168.0" layoutY="2.0" onAction="#changeHotKey" prefWidth="59.0" style="-fx-background-color: #ffffff;" AnchorPane.rightAnchor="0.0" />
-											</children>
-										</AnchorPane>
-										<AnchorPane>
-											<children>
-												<Label text="Time visible" AnchorPane.leftAnchor="0.0">
-													<padding>
-														<Insets bottom="5.0" top="5.0" />
-													</padding>
-													<font>
-														<Font size="14.0" />
-													</font>
-												</Label>
-												<Spinner fx:id="timeOnTopSpinner" layoutX="163.0" layoutY="2.0" prefHeight="25.0" prefWidth="59.0" AnchorPane.rightAnchor="0.0">
-													<valueFactory>
-														<SpinnerValueFactory.DoubleSpinnerValueFactory amountToStepBy="0.1" initialValue="5.0" max="15.0" min="0.0" />
-													</valueFactory>
-												</Spinner>
-											</children>
-										</AnchorPane>
-									</children>
-								</VBox>
-								<Separator prefWidth="200.0" />
-								<AnchorPane style="-fx-background-color: #ffffff;">
-									<children>
-										<JFXButton onAction="#updateData" prefHeight="42.0" text="Update Data" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-									</children>
-								</AnchorPane>
-								<Separator prefWidth="200.0" />
-								<VBox spacing="5.0">
-									<children>
-										<AnchorPane>
-											<children>
-												<JFXButton layoutX="38.0" layoutY="127.0" onAction="#accept" prefHeight="42.0" style="-fx-background-color: #ffffff;" text="Accept" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-											</children>
-										</AnchorPane>
-										<AnchorPane>
-											<children>
-												<JFXButton layoutX="38.0" layoutY="127.0" onAction="#cancel" prefHeight="42.0" style="-fx-background-color: #ffffff;" text="Cancel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-											</children>
-										</AnchorPane>
-									</children>
-								</VBox>
-							</children>
-						</VBox>
-					</children>
-				</AnchorPane>
-			</children>
-		</StackPane>
-	</children>
-	<opaqueInsets>
-		<Insets />
-	</opaqueInsets>
+    <children>
+        <StackPane fx:id="stackPane" prefHeight="434.0" prefWidth="220.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+            <children>
+                <AnchorPane prefHeight="500.0" prefWidth="220.0">
+                    <children>
+                        <VBox layoutY="-5.0" prefHeight="500.0" prefWidth="220.0" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <children>
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <Label text="ScreenResolution">
+                                            <font>
+                                                <Font size="16.0" />
+                                            </font>
+                                        </Label>
+                                        <AnchorPane>
+                                            <children>
+                                                <JFXComboBox fx:id="resolutionComboBox" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                                            </children>
+                                        </AnchorPane>
+                                    </children>
+                                </VBox>
+                                <Separator prefWidth="200.0" />
+                                <VBox fx:id="pricerVBox" spacing="5.0">
+                                    <children>
+                                        <Label text="Displayed Values">
+                                            <font>
+                                                <Font size="16.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                                <Separator prefWidth="200.0" />
+                                <VBox>
+                                    <children>
+                                        <Label text="Trigger By Hotkey">
+                                            <font>
+                                                <Font size="16.0" />
+                                            </font>
+                                        </Label>
+                                        <AnchorPane>
+                                            <children>
+                                                <Label text="Hotkey" AnchorPane.leftAnchor="0.0">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                    <padding>
+                                                        <Insets bottom="5.0" top="5.0" />
+                                                    </padding>
+                                                </Label>
+                                                <JFXButton fx:id="hotkeyButton" layoutX="168.0" layoutY="2.0" onAction="#changeHotKey" prefWidth="59.0" style="-fx-background-color: #ffffff;" AnchorPane.rightAnchor="0.0" />
+                                            </children>
+                                        </AnchorPane>
+                                        <AnchorPane>
+                                            <children>
+                                                <Label text="Time visible" AnchorPane.leftAnchor="0.0">
+                                                    <padding>
+                                                        <Insets bottom="5.0" top="5.0" />
+                                                    </padding>
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Label>
+                                                <Spinner fx:id="timeOnTopSpinner" layoutX="163.0" layoutY="2.0" prefHeight="25.0" prefWidth="59.0" AnchorPane.rightAnchor="0.0">
+                                                    <valueFactory>
+                                                        <SpinnerValueFactory.DoubleSpinnerValueFactory amountToStepBy="0.1" initialValue="5.0" max="15.0" min="0.0" />
+                                                    </valueFactory>
+                                                </Spinner>
+                                            </children>
+                                        </AnchorPane>
+                                    </children>
+                                </VBox>
+                                <Separator prefWidth="200.0" />
+                                <AnchorPane style="-fx-background-color: #ffffff;">
+                                    <children>
+                                        <JFXButton onAction="#updateData" prefHeight="42.0" text="Update Data" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    </children>
+                                </AnchorPane>
+                                <Separator prefWidth="200.0" />
+                                <VBox spacing="5.0">
+                                    <children>
+                                        <AnchorPane>
+                                            <children>
+                                                <JFXButton layoutX="38.0" layoutY="127.0" onAction="#accept" prefHeight="42.0" style="-fx-background-color: #ffffff;" text="Accept" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                            </children>
+                                        </AnchorPane>
+                                        <AnchorPane>
+                                            <children>
+                                                <JFXButton layoutX="38.0" layoutY="127.0" onAction="#cancel" prefHeight="42.0" style="-fx-background-color: #ffffff;" text="Cancel" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                            </children>
+                                        </AnchorPane>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                    </children>
+                </AnchorPane>
+            </children>
+        </StackPane>
+    </children>
+    <opaqueInsets>
+        <Insets />
+    </opaqueInsets>
 </AnchorPane>
