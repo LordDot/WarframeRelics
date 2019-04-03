@@ -12,141 +12,190 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+public class WarframeMarket {
 
-public class WarframeMarket{
+    private static Logger log = Logger.getLogger(WarframeMarket.class.getName());
 
-	private static Logger log = Logger.getLogger(WarframeMarket.class.getName());
+    private static final String API_URL = "https://api.warframe.market/v1/items/";
+    private static final String ORDER_SUFFIX = "/orders";
+    private static final String STATISTICS_SUFFIX = "/statistics";
 
-	private static final int OFFLINE = 0;
-	private static final int ONLINE = 1;
-	private static final int INGAME = 2;
+    private static final int OFFLINE = 0;
+    private static final int ONLINE = 1;
+    private static final int INGAME = 2;
 
-	private static final int SELL = 0;
-	private static final int BUY = 1;
-	
-	public Price getPlat(String itemName) throws MalformedURLException, IOException {
-		String targetItem = removeBlueprint(itemName.toLowerCase()).replace(" ", "_");
+    private static final int SELL = 0;
+    private static final int BUY = 1;
 
-		targetItem = targetItem.replace("_band", "_collar_band").replaceAll("_buckle", "_collar_buckle").replace("kubrow_", "");
-		targetItem = targetItem.replace("&", "and");
-		
-		String url = "https://api.warframe.market/v1/items/" + targetItem + "/orders";
-		log.info("Searched for " + itemName + " with url " + url);
+    public OrderInformation getOrders(String itemName) throws IOException {
+        String targetItem = cleanItemName(itemName);
 
-		Reader reader = new InputStreamReader(new URL(url).openStream());
-		JsonParser parser = new JsonParser();
-		JsonArray orders = parser.parse(reader).getAsJsonObject().get("payload").getAsJsonObject().get("orders")
-				.getAsJsonArray();
+        String url = API_URL + targetItem + ORDER_SUFFIX;
+        log.info("Searched for " + itemName + " with url " + url);
 
-		int[][] prices = new int[3][2];
-		for (int i = 0; i < 3; i++) {
-			prices[i][SELL] = Integer.MAX_VALUE;
-		}
+        JsonArray orders;
+        try(Reader reader = new InputStreamReader(new URL(url).openStream());) {
+            JsonParser parser = new JsonParser();
+            orders = parser.parse(reader).getAsJsonObject().get("payload").getAsJsonObject().get("orders")
+                    .getAsJsonArray();
+        }
 
-		for (JsonElement e : orders) {
-			JsonObject order = e.getAsJsonObject();
-			if (order.get("visible").getAsBoolean()) {
-				int status;
+        int[][] prices = new int[3][2];
+        for (int i = 0; i < 3; i++) {
+            prices[i][SELL] = Integer.MAX_VALUE;
+        }
 
-				String statusString = order.get("user").getAsJsonObject().get("status").getAsString();
-				if (statusString.equals("offline")) {
-					status = OFFLINE;
-				} else if (statusString.equals("online")) {
-					status = ONLINE;
-				} else if (statusString.equals("ingame")) {
-					status = INGAME;
-				} else {
-					throw new IOException("Unknown status");
-				}
+        for (JsonElement e : orders) {
+            JsonObject order = e.getAsJsonObject();
+            if (order.get("visible").getAsBoolean()) {
+                int status;
 
-				int price = order.get("platinum").getAsInt();
-				String orderType = order.get("order_type").getAsString();
-				if (orderType.equals("buy")) {
-					if (prices[status][BUY] < price) {
-						prices[status][BUY] = price;
-					}
-				} else if (orderType.equals("sell")) {
-					if (prices[status][SELL] > price) {
-						prices[status][SELL] = price;
-					}
-				} else {
-					throw new IOException("Unknown orderType");
-				}
-			}
-		}
-		return new Price(prices);
-	}
+                String statusString = order.get("user").getAsJsonObject().get("status").getAsString();
+                 if ("offline".equals(statusString)) {
+                    status = OFFLINE;
+                } else if ("online".equals(statusString)) {
+                    status = ONLINE;
+                } else if ("ingame".equals(statusString)) {
+                    status = INGAME;
+                } else {
+                    throw new IOException("Unknown status");
+                }
 
-	private String removeBlueprint(String name) {
-		if (!(name.contains("helios") || name.contains("carrier") || name.contains("wyrm"))) {
-			if (name.contains("systems") || name.contains("chassis") || name.contains("neuroptics") || name.contains("harness") || name.contains("wings")) {
-				name = name.substring(0, name.length() - 10);
-			}
-		}
-		return name;
-	}
-	
-	public class Price {
-		private IntegerProperty offlineSell;
-		private IntegerProperty onlineSell;
-		private IntegerProperty ingameSell;
-		private IntegerProperty offlineBuy;
-		private IntegerProperty onlineBuy;
-		private IntegerProperty ingameBuy;
+                int price = order.get("platinum").getAsInt();
+                String orderType = order.get("order_type").getAsString();
+                if (orderType.equals("buy")) {
+                    if (prices[status][BUY] < price) {
+                        prices[status][BUY] = price;
+                    }
+                } else if (orderType.equals("sell")) {
+                    if (prices[status][SELL] > price) {
+                        prices[status][SELL] = price;
+                    }
+                } else {
+                    throw new IOException("Unknown orderType");
+                }
+            }
+        }
+        return new OrderInformation(prices);
+    }
 
-		public Price() {
-			offlineSell = new SimpleIntegerProperty();
-			onlineSell = new SimpleIntegerProperty();
-			ingameSell = new SimpleIntegerProperty();
-			offlineBuy = new SimpleIntegerProperty();
-			onlineBuy = new SimpleIntegerProperty();
-			ingameBuy = new SimpleIntegerProperty();
-		}
-		
-		public Price(int[][] prices) {
-			this();
-			if(!(prices.length == 3 && prices[0].length == 2)) {
-				throw new IllegalArgumentException();
-			}
-			offlineBuy.set(prices[OFFLINE][BUY]);
-			onlineBuy.set(prices[ONLINE][BUY]);
-			ingameBuy.set(prices[INGAME][BUY]);
-			offlineSell.set(prices[OFFLINE][SELL]);
-			onlineSell.set(prices[ONLINE][SELL]);
-			ingameSell.set(prices[INGAME][SELL]);
-		}
-		
+    public Statistics getStatistics(String itemName) throws IOException {
+        String url =  API_URL + cleanItemName(itemName) + STATISTICS_SUFFIX;
 
-		public int getOfflineSell() {
-			return offlineSell.get();
-		}
+        JsonObject info;
+        try(Reader reader = new InputStreamReader(new URL(url).openStream());){
+            info = new JsonParser().parse(reader).getAsJsonObject();
+        }
+        JsonArray statistics = info.get("payload").getAsJsonObject().get("statistics_closed").getAsJsonObject().get("48hours").getAsJsonArray();
 
-		public int getOnlineSell() {
-			return onlineSell.get();
-		}
+        int totalAmount = 0;
+        int totalPrice = 0;
+        for(JsonElement timePieceElement: statistics){
+            JsonObject timePiece = timePieceElement.getAsJsonObject();
+            int amount = timePiece.get("volume").getAsInt();
+            int price = timePiece.get("avg_price").getAsInt();
+            totalAmount += amount;
+            totalPrice += amount * price;
+        }
 
-		public int getIngameSell() {
-			return ingameSell.get();
-		}
+        return new Statistics(totalAmount, totalPrice / (float) totalAmount);
+    }
 
-		public int getOfflineBuy() {
-			return offlineBuy.get();
-		}
+    private String cleanItemName(String name) {
+        name = name.toLowerCase();
 
-		public int getOnlineBuy() {
-			return onlineBuy.get();
-		}
+        if (!(name.contains("helios") || name.contains("carrier") || name.contains("wyrm"))) {
+            if (name.contains("systems") || name.contains("chassis") || name.contains("neuroptics") || name.contains("harness") || name.contains("wings")) {
+                name = name.substring(0, name.length() - 10);
+            }
+        }
 
-		public int getIngameBuy() {
-			return ingameBuy.get();
-		}
-		
-		@Override
-		public String toString() {
-			return "Price [offlineSell=" + offlineSell.get() + ", onlineSell=" + onlineSell.get() + ", ingameSell=" + ingameSell.get()
-					+ ", offlineBuy=" + offlineBuy.get() + ", onlineBuy=" + onlineBuy.get() + ", ingameBuy=" + ingameBuy.get() + "]";
-		}
-	}
+        name = name.replace(" ", "_");
+
+        name = name.replace("_band", "_collar_band").replaceAll("_buckle", "_collar_buckle").replace("kubrow_", "");
+        name = name.replace("&", "and");
+
+        return name;
+    }
+
+    public class Statistics{
+        private int amountMoved;
+        private float averagePrice;
+
+        public Statistics(int amountMoved, float averagePrice) {
+            this.amountMoved = amountMoved;
+            this.averagePrice = averagePrice;
+        }
+
+        public int getAmountMoved() {
+            return amountMoved;
+        }
+
+        public float getAveragePrice() {
+            return averagePrice;
+        }
+    }
+
+    public class OrderInformation {
+        private int offlineSell;
+        private int onlineSell;
+        private int ingameSell;
+        private int offlineBuy;
+        private int onlineBuy;
+        private int ingameBuy;
+
+        public OrderInformation() {
+
+        }
+
+        public OrderInformation(int[][] prices) {
+            this();
+            if (!(prices.length == 3 && prices[0].length == 2)) {
+                throw new IllegalArgumentException();
+            }
+            offlineBuy = (prices[OFFLINE][BUY]);
+            onlineBuy = (prices[ONLINE][BUY]);
+            ingameBuy = (prices[INGAME][BUY]);
+            offlineSell = (prices[OFFLINE][SELL]);
+            onlineSell = (prices[ONLINE][SELL]);
+            ingameSell = (prices[INGAME][SELL]);
+        }
+
+
+        public int getOfflineSell() {
+            return offlineSell;
+        }
+
+        public int getOnlineSell() {
+            return onlineSell;
+        }
+
+        public int getIngameSell() {
+            return ingameSell;
+        }
+
+        public int getOfflineBuy() {
+            return offlineBuy;
+        }
+
+        public int getOnlineBuy() {
+            return onlineBuy;
+        }
+
+        public int getIngameBuy() {
+            return ingameBuy;
+        }
+
+        @Override
+        public String toString() {
+            return "OrderInformation{" +
+                    "offlineSell=" + offlineSell +
+                    ", onlineSell=" + onlineSell +
+                    ", ingameSell=" + ingameSell +
+                    ", offlineBuy=" + offlineBuy +
+                    ", onlineBuy=" + onlineBuy +
+                    ", ingameBuy=" + ingameBuy +
+                    '}';
+        }
+    }
 }

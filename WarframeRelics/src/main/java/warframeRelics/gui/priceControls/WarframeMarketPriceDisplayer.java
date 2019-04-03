@@ -12,10 +12,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import warframeRelics.beans.PrimeItem;
 import warframeRelics.pricing.WarframeMarket;
-import warframeRelics.pricing.WarframeMarket.Price;
+import warframeRelics.pricing.WarframeMarket.OrderInformation;
 
 public class WarframeMarketPriceDisplayer extends PriceDisplayer {
-	private Property<Price> priceProperty;
+	private Property<WarframeMarket.OrderInformation> priceProperty;
 
 	@FXML
 	private Label ingameBuy;
@@ -34,7 +34,7 @@ public class WarframeMarketPriceDisplayer extends PriceDisplayer {
 
 	public WarframeMarketPriceDisplayer(WarframeMarket pricer) {
 		this.pricer = pricer;
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("PriceDisplayer.fxml"));
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("WarframeMarketPriceDisplayer.fxml"));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 
@@ -45,10 +45,10 @@ public class WarframeMarketPriceDisplayer extends PriceDisplayer {
 		}
 
 		priceProperty = new SimpleObjectProperty<>();
-		priceProperty.addListener(new ChangeListener<Price>() {
+		priceProperty.addListener(new ChangeListener<OrderInformation>() {
 
 			@Override
-			public void changed(ObservableValue<? extends Price> observable, Price oldValue, Price newValue) {
+			public void changed(ObservableValue<? extends OrderInformation> observable, OrderInformation oldValue, OrderInformation newValue) {
 				if (newValue == null) {
 					Platform.runLater(() -> {
 						ingameBuy.setText("");
@@ -70,15 +70,15 @@ public class WarframeMarketPriceDisplayer extends PriceDisplayer {
 		});
 	}
 
-	public void setPrice(Price p) {
+	public void setPrice(OrderInformation p) {
 		priceProperty.setValue(p);
 	}
 
-	public Price getPrice() {
+	public OrderInformation getPrice() {
 		return priceProperty.getValue();
 	}
 
-	public Property<Price> pricePoperty() {
+	public Property<WarframeMarket.OrderInformation> pricePoperty() {
 		return priceProperty;
 	}
 
@@ -96,9 +96,9 @@ public class WarframeMarketPriceDisplayer extends PriceDisplayer {
 	public void setPrice(PrimeItem item) {
 		try {
 			if (item != null && !item.equals("Forma Blueprint")) {
-				setPrice(pricer.getPlat(item.getDisplayName()));
+				setPrice(pricer.getOrders(item.getDisplayName()));
 			} else {
-				setPrice((Price) null);
+				setPrice((OrderInformation) null);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

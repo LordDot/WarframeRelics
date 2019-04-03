@@ -69,7 +69,7 @@ public class WarframeRelics extends Application {
 			return new WarframeRelicsController(stage, database,"warframeRelics/screenCapture/relicsPositions.json",SETTINGS_PATH, imageFile);
 		});
 		Parent root = loader.load();
-		mainScene = new Scene(root, 600, 410);
+		mainScene = new Scene(root, 800, 410);
 		stage.setScene(mainScene);
 		stage.show();
 	}

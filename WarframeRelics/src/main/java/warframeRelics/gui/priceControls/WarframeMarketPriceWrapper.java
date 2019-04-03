@@ -7,20 +7,20 @@ import javafx.scene.text.Font;
 import warframeRelics.gui.Util;
 import warframeRelics.pricing.WarframeMarket;
 
-public class WarframeMarketWrapper extends Pricer{
+public class WarframeMarketPriceWrapper extends Pricer{
 
 	private WarframeMarket market;
 	
-	WarframeMarketWrapper(String id) {
+	WarframeMarketPriceWrapper(String id, WarframeMarket market) {
 		super(id);
-		this.market = new WarframeMarket();
+		this.market = market;
 	}
 	
 	
 	
 	@Override
 	public String getName() {
-		return "Warframe Market";
+		return "Warframe Market Prices";
 	}
 
 	@Override
