@@ -1,5 +1,14 @@
 package warframeRelics.gui;
 
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import warframeRelics.dataBase.SQLLiteDataBase;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -8,22 +17,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
-
-import javafx.application.Application;
-import javafx.application.Application.Parameters;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import javafx.util.Callback;
-import warframeRelics.dataBase.SQLLiteDataBase;
-
 
 public class WarframeRelics extends Application {
 
-	public static final String VERSION = "1.7.1.0";
+	public static final String VERSION = "2.0.0.0";
 	public static final String TESSDATA_PATH = "./tessdata";
 	public static final String DB_PATH = "./db.db";
 	public static final String LOG_PATH = "./log.txt";

@@ -1,38 +1,18 @@
 package warframeRelics.gui;
 
-import java.awt.AWTException;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.Writer;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.logging.Logger;
-
-import javax.imageio.ImageIO;
-
 import com.jfoenix.controls.JFXButton;
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
-import org.jnativehook.keyboard.NativeKeyEvent;
-import org.jnativehook.keyboard.NativeKeyListener;
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import net.sourceforge.tess4j.TesseractException;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
 import warframeRelics.beans.PrimeItem;
 import warframeRelics.dataBase.SQLLiteDataBase;
 import warframeRelics.gui.priceControls.PriceDisplayer;
@@ -41,12 +21,17 @@ import warframeRelics.gui.priceControls.PricerFactory;
 import warframeRelics.gui.settings.Settings;
 import warframeRelics.gui.settings.SettingsDialog;
 import warframeRelics.gui.settings.SettingsLoader;
-import warframeRelics.screenCapture.BufferedImageProvider;
-import warframeRelics.screenCapture.FileImageProvider;
-import warframeRelics.screenCapture.RelicReader;
-import warframeRelics.screenCapture.ResolutionFile;
-import warframeRelics.screenCapture.ScreenBufferedImageProvider;
-import warframeRelics.screenCapture.ScreenResolution;
+import warframeRelics.screenCapture.*;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.*;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.logging.Logger;
 
 public class WarframeRelicsController implements Initializable, NativeKeyListener {
     private static final Logger log = Logger.getLogger(WarframeRelicsController.class.getName());
@@ -65,6 +50,8 @@ public class WarframeRelicsController implements Initializable, NativeKeyListene
     @FXML
     private GridPane table;
     @FXML
+    private StackPane stackPane;
+    @FXML
     private Stage mainStage;
     @FXML
     private JFXButton readRewardsButton;
@@ -72,6 +59,7 @@ public class WarframeRelicsController implements Initializable, NativeKeyListene
     private JFXButton screenshotButton;
     @FXML
     private JFXButton settingsButton;
+    private List<Runnable> onLoaded;
 
     // private Label[] nameLabels;
     private List<Updatable<PriceDisplayer>[]> prices;
@@ -83,8 +71,18 @@ public class WarframeRelicsController implements Initializable, NativeKeyListene
         } catch (NativeHookException e2) {
             e2.printStackTrace();
         }
+        onLoaded = new ArrayList<>();
+
         this.mainStage = stage;
         this.database = dataBase;
+
+        SQLLiteDataBase.State dbState = dataBase.getState();
+        if (dbState == SQLLiteDataBase.State.NEW) {
+            onLoaded.add(() -> new MessageBox("No Data", "The data what prime items exist has not been downloaded yet. To do so, go to 'Settings' and press the 'Update Data'-button.").show(stackPane));
+        } else if (dbState == SQLLiteDataBase.State.RESET) {
+            onLoaded.add(() -> new MessageBox("Corrupted Data", "The downloaded data appears to be courrupted. This can be caused by an Update of WarframeRelics. The corrupted Data has been deleted. Go to 'Settings' and press the 'Update Data'-button to download it again").show(stackPane));
+        }
+
         settingsPath = settingsFile;
         try (InputStream in = getClass().getClassLoader().getResourceAsStream(resolutionFile);) {
             this.resolutionFile = new ResolutionFile(in);
@@ -93,23 +91,22 @@ public class WarframeRelicsController implements Initializable, NativeKeyListene
         }
         pricerFactory = new PricerFactory(dataBase);
 
-        boolean newSettings = false;
         if (new File(settingsFile).exists()) {
             try (Reader in = new FileReader(settingsFile)) {
                 this.settings = SettingsLoader.loadSettings(in, this.resolutionFile);
             } catch (IOException | NullPointerException e) {
-                newSettings = true;
-                e.printStackTrace();
+                loadDefaultSettings();
+                try (Writer out = new FileWriter(settingsFile)) {
+                    SettingsLoader.writeSettings(settings, out);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                onLoaded.add(() -> {
+                    new MessageBox("Corrupted Settings", "Your settings appear to have been corrupted and have been reset.").show(stackPane);
+                });
             }
         } else {
-            newSettings = true;
-        }
-
-        if (newSettings) {
-            List<String> defaultPricers = new ArrayList<>(2);
-            defaultPricers.add(PricerFactory.NAME);
-            defaultPricers.add(PricerFactory.WARFRAME_MARKET_PRICES);
-            this.settings = new Settings(this.resolutionFile.getFromString("1920x1080"), defaultPricers, -1, 5.0f);
+            loadDefaultSettings();
         }
 
         try {
@@ -134,6 +131,17 @@ public class WarframeRelicsController implements Initializable, NativeKeyListene
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setPriceDisplayers(settings.getPriceDisplayers());
+        for (Runnable r : onLoaded) {
+            r.run();
+        }
+        onLoaded = null;
+    }
+
+    private void loadDefaultSettings() {
+        List<String> defaultPricers = new ArrayList<>(2);
+        defaultPricers.add(PricerFactory.NAME);
+        defaultPricers.add(PricerFactory.WARFRAME_MARKET_PRICES);
+        this.settings = new Settings(this.resolutionFile.getFromString("1920x1080"), defaultPricers, -1, 5.0f);
     }
 
     public void setPriceDisplayers(List<String> pricers) {

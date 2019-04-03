@@ -1,21 +1,18 @@
 package warframeRelics.dataBase;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Logger;
-
 import warframeRelics.beans.PrimeItem;
 import warframeRelics.gui.Util;
-import warframeRelics.gui.WarframeRelics;
+
+import java.io.File;
+import java.sql.*;
+import java.util.logging.Logger;
 
 public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 
 	private static Logger log = Logger.getLogger(SQLLiteDataBase.class.getName());
+    private static final String VERSION = "1";
+
+    public enum State {EXISTING, NEW, RESET}
 
 	private static final String getAllItemNamesSql = "select display_name from items;";
 	private PreparedStatement getAllItemNames;
@@ -27,26 +24,62 @@ public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 	private Connection connection;
 	private int relicPrimaryKey;
 
-	public SQLLiteDataBase(String path) throws SQLException {
-		relicPrimaryKey = 0;
+    private State state;
 
-		String url = "jdbc:sqlite:" + path;
-		boolean newDB = !new File(path).exists();
+    public SQLLiteDataBase(String path) throws SQLException {
+        relicPrimaryKey = 0;
 
-		connection = DriverManager.getConnection(url);
+        String url = "jdbc:sqlite:" + path;
+        boolean newDB = !new File(path).exists();
 
-		if (newDB) {
-			try (Statement stmt = connection.createStatement();) {
-				stmt.execute("Create table items(id int primary_key, unique_name varchar2(100) unique, display_name varchar2(50) unique, vaulted bit);");
-				stmt.execute("Create table info (id int primary key, key varchar(20),value varchar(20));");
-				stmt.execute("insert into info values(0, 'version','" + WarframeRelics.VERSION + "');");
-			}
-		}
+        connection = DriverManager.getConnection(url);
 
-		getAllItemNames = connection.prepareStatement(getAllItemNamesSql);
-		getItemByDisplayName = connection.prepareStatement(getItemByDisplayNameSql);
-		addItem = connection.prepareStatement(addItemSql);
-	}
+        if (newDB) {
+            initialize();
+            state = State.NEW;
+        } else {
+            try (Statement stmt = connection.createStatement();) {
+                try (ResultSet set = stmt.executeQuery("select value from info where key == 'version';")) {
+                    if (set.next() && set.getString("value").equals(VERSION)) {
+                        state = State.EXISTING;
+                    } else {
+                        reset();
+                    }
+                } catch (SQLException e) {
+                    reset();
+                }
+            }
+        }
+
+        getAllItemNames = connection.prepareStatement(getAllItemNamesSql);
+        getItemByDisplayName = connection.prepareStatement(getItemByDisplayNameSql);
+        addItem = connection.prepareStatement(addItemSql);
+
+    }
+
+    private void reset() throws SQLException {
+        try (Statement stmt = connection.createStatement()) {
+            try (ResultSet results = stmt.executeQuery("select name from sqlite_master where type = 'table' and name not like 'sqlite_%';")) {
+                while (results.next()) {
+                    stmt.execute("drop table " + results.getString(1) + ";");
+                }
+            }
+        }
+        initialize();
+        state = State.RESET;
+    }
+
+    private void initialize() throws SQLException {
+        try (Statement stmt = connection.createStatement();) {
+            stmt.execute("Create table items(id int primary_key, unique_name varchar2(100) unique, display_name varchar2(50) unique, vaulted bit);");
+            stmt.execute("Create table info (id int primary key, key varchar(20),value varchar(20));");
+            stmt.execute("insert into info values(0, 'version','" + VERSION + "');");
+        }
+    }
+
+    public State getState() {
+        return state;
+    }
 
 	@Override
 	public synchronized PrimeItem getNearestItemName(String name) throws RuntimeException {
