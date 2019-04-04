@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+
 <?import com.jfoenix.controls.JFXCheckBox?>
 <?import javafx.scene.layout.AnchorPane?>
-
-
 <fx:root type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <JFXCheckBox fx:id="checkBox" layoutX="25.0" AnchorPane.leftAnchor="0.0" />
