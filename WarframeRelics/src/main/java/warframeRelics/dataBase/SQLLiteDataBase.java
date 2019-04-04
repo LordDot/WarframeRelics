@@ -18,7 +18,7 @@ public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 	private PreparedStatement getAllItemNames;
 	private static final String getItemByDisplayNameSql = "select * from items where display_name = ?;";
 	private PreparedStatement getItemByDisplayName;
-	private static final String addItemSql = "insert into items values (?,?,?,?);";
+    private static final String addItemSql = "insert into items values (?,?,?,?,?);";
 	private PreparedStatement addItem;
 
 	private Connection connection;
@@ -71,7 +71,7 @@ public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 
     private void initialize() throws SQLException {
         try (Statement stmt = connection.createStatement();) {
-            stmt.execute("Create table items(id int primary_key, unique_name varchar2(100) unique, display_name varchar2(50) unique, vaulted bit);");
+            stmt.execute("Create table items(id int primary_key, unique_name varchar2(100) unique, display_name varchar2(50) unique, vaulted bit, ducats int);");
             stmt.execute("Create table info (id int primary key, key varchar(20),value varchar(20));");
             stmt.execute("insert into info values(0, 'version','" + VERSION + "');");
         }
@@ -119,7 +119,8 @@ public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 				String uniqueName = results.getString("unique_name");
 				String displayName = results.getString("display_name");
 				boolean vaulted = results.getBoolean("vaulted");
-				ret = new PrimeItem(uniqueName,displayName,vaulted);
+                int ducats = results.getInt("ducats");
+                ret = new PrimeItem(uniqueName, displayName, vaulted, ducats);
 			}
 		}
 		return ret;
@@ -142,11 +143,12 @@ public class SQLLiteDataBase implements IDataBase, AutoCloseable {
 	}
 
 	@Override
-	public void addItem(String uniqueName, String displayName, boolean vaulted) throws SQLException {
+    public void addItem(String uniqueName, String displayName, boolean vaulted, int ducats) throws SQLException {
 		addItem.setInt(1,relicPrimaryKey++);
 		addItem.setString(2,uniqueName);
 		addItem.setString(3,displayName);
 		addItem.setBoolean(4,vaulted);
+        addItem.setInt(5, ducats);
 		addItem.execute();
 	}
 

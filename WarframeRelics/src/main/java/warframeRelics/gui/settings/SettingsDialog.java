@@ -1,28 +1,7 @@
 package warframeRelics.gui.settings;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.keyboard.NativeKeyEvent;
-import org.jnativehook.keyboard.NativeKeyListener;
-
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXCheckBox;
-import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.*;
 import com.jfoenix.controls.JFXDialog.DialogTransition;
-import com.jfoenix.controls.JFXSpinner;
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -38,6 +17,9 @@ import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
 import warframeRelics.dataBase.IDataBase;
 import warframeRelics.dataDownload.DataDownLoader;
 import warframeRelics.gui.PricerDisplayer;
@@ -45,6 +27,18 @@ import warframeRelics.gui.priceControls.Pricer;
 import warframeRelics.gui.priceControls.PricerFactory;
 import warframeRelics.screenCapture.ResolutionFile;
 import warframeRelics.screenCapture.ScreenResolution;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class SettingsDialog implements Initializable, NativeKeyListener {
 
@@ -140,7 +134,6 @@ public class SettingsDialog implements Initializable, NativeKeyListener {
     }
 
     public Settings getSettings() {
-
         List<String> selectedPricers = pricerDisplayers.stream().filter((pd)-> pd.isSelected()).map((pd)->pd.getPricer().getId()).collect(Collectors.toList());
         settings.setPriceDisplayers(selectedPricers);
         settings.setResolution(resolutionComboBox.getValue());

@@ -42,7 +42,7 @@ public class WarframeMarketStatisticsDisplayer extends PriceDisplayer {
 
             Platform.runLater(() -> {
                 amountLabel.setText("" + statistics.getAmountMoved());
-                priceLabel.setText("" + statistics.getAveragePrice());
+                priceLabel.setText("" + String.format("%.2f", statistics.getAveragePrice()));
             });
             setVisible(true);
         }else{

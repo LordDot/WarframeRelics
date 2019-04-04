@@ -1,6 +1,11 @@
 package warframeRelics.dataDownload;
 
-import java.io.BufferedReader;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import warframeRelics.dataBase.IDataBase;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -8,15 +13,6 @@ import java.net.URLConnection;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Logger;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import warframeRelics.dataBase.IDataBase;
-import warframeRelics.dataBase.SQLLiteDataBase;
-import warframeRelics.gui.Util;
 
 public class DataDownLoader {
     private static Logger log = Logger.getLogger(DataDownLoader.class.getName());
@@ -113,7 +109,11 @@ public class DataDownLoader {
                     if (component.has("vaulted")) {
                         vaulted = o.get("vaulted").getAsString().equals(true);
                     }
-                    database.addItem(uniqueName,displayName,vaulted);
+                    int ducats = 45;
+                    if (name.equals("Kavasa Prime Buckle")) {
+                        ducats = 65;
+                    }
+                    database.addItem(uniqueName, displayName, vaulted, ducats);
                 }
             }
         }
@@ -152,7 +152,8 @@ public class DataDownLoader {
                             if (component.has("vaulted")) {
                                 vaulted = equipment.get("vaulted").getAsString().equals(true);
                             }
-                            database.addItem(uniqueName, displayName, vaulted);
+                            int ducats = component.get("ducats").getAsInt();
+                            database.addItem(uniqueName, displayName, vaulted, ducats);
                         }
                     }
                 }
