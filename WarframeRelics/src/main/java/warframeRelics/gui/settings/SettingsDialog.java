@@ -3,14 +3,21 @@ package warframeRelics.gui.settings;
 import com.jfoenix.controls.*;
 import com.jfoenix.controls.JFXDialog.DialogTransition;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -22,7 +29,6 @@ import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import warframeRelics.dataBase.IDataBase;
 import warframeRelics.dataDownload.DataDownLoader;
-import warframeRelics.gui.PricerDisplayer;
 import warframeRelics.gui.priceControls.Pricer;
 import warframeRelics.gui.priceControls.PricerFactory;
 import warframeRelics.screenCapture.ResolutionFile;
@@ -120,6 +126,7 @@ public class SettingsDialog implements Initializable, NativeKeyListener {
         for (Pricer p : pricerFactory.getAllPricers()) {
             PricerDisplayer dp = new PricerDisplayer();
             dp.setPricer(p);
+            registerDragEvents(dp);
             pricerVBox.getChildren().add(dp);
             pricerDisplayers.add(dp);
         }
@@ -134,7 +141,7 @@ public class SettingsDialog implements Initializable, NativeKeyListener {
     }
 
     public Settings getSettings() {
-        List<String> selectedPricers = pricerDisplayers.stream().filter((pd)-> pd.isSelected()).map((pd)->pd.getPricer().getId()).collect(Collectors.toList());
+        List<String> selectedPricers = pricerDisplayers.stream().filter((pd) -> pd.isSelected()).map((pd) -> pd.getPricer().getId()).collect(Collectors.toList());
         settings.setPriceDisplayers(selectedPricers);
         settings.setResolution(resolutionComboBox.getValue());
         settings.setOnTopTime(timeOnTopSpinner.getValue().floatValue());
@@ -240,4 +247,69 @@ public class SettingsDialog implements Initializable, NativeKeyListener {
     public void nativeKeyReleased(NativeKeyEvent nativeEvent) {
     }
 
+
+    private void registerDragEvents(PricerDisplayer target) {
+        target.addEventFilter(MouseEvent.DRAG_DETECTED, (event) -> {
+
+            Dragboard dragboard = target.startDragAndDrop(TransferMode.ANY);
+
+            ClipboardContent content = new ClipboardContent();
+            content.putString(target.getPricer().getId());
+            dragboard.setContent(content);
+
+            event.consume();
+        });
+        target.setOnDragOver(event -> {
+
+            if (!checkChilds(target, (Node) event.getGestureSource()) && event.getDragboard().hasString()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+
+            event.consume();
+        });
+        target.setOnDragEntered(event -> {
+
+            if (!checkChilds(target, (Node) event.getGestureSource()) && event.getDragboard().hasString()) {
+                target.setOpacity(0.3);
+            }
+        });
+        target.setOnDragExited(event -> {
+
+            if (!checkChilds(target, (Node) event.getGestureSource()) && event.getDragboard().hasString()) {
+                target.setOpacity(1);
+            }
+        });
+        target.setOnDragDropped(event -> {
+
+            Dragboard dragboard = event.getDragboard();
+            boolean success = false;
+            if (dragboard.hasString()) {
+                ObservableList<Node> children = pricerVBox.getChildren();
+                int index = children.indexOf(target);
+                String draggedId = dragboard.getString();
+                PricerDisplayer dragged = (PricerDisplayer) pricerVBox.getChildren().stream().filter(node -> node instanceof PricerDisplayer && ((PricerDisplayer) node).getPricer().getId() == draggedId).collect(Collectors.toList()).get(0);
+                children.remove(dragged);
+                children.add(index, dragged);
+                pricerDisplayers.remove(dragged);
+                pricerDisplayers.add(index, dragged);
+                success = true;
+            }
+
+            event.setDropCompleted(success);
+
+            event.consume();
+        });
+    }
+
+    private boolean checkChilds(Pane parent, Node child) {
+        if (child == parent) {
+            return true;
+        }
+        for (Node n : parent.getChildren()) {
+            if (n instanceof Pane && checkChilds((Pane) n, child)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

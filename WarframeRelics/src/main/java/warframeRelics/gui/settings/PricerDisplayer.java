@@ -1,4 +1,4 @@
-package warframeRelics.gui;
+package warframeRelics.gui.settings;
 
 import com.jfoenix.controls.JFXCheckBox;
 import javafx.fxml.FXML;
@@ -7,8 +7,9 @@ import javafx.scene.layout.AnchorPane;
 import warframeRelics.gui.priceControls.Pricer;
 
 import java.io.IOException;
+import java.io.Serializable;
 
-public class PricerDisplayer extends AnchorPane {
+public class PricerDisplayer extends AnchorPane implements Serializable {
 
     private Pricer pricer;
 
