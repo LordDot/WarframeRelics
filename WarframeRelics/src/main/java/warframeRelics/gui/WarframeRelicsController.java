@@ -140,7 +140,7 @@ public class WarframeRelicsController implements Initializable, NativeKeyListene
     private void loadDefaultSettings() {
         List<String> defaultPricers = new ArrayList<>(2);
         defaultPricers.add(PricerFactory.NAME);
-        defaultPricers.add(PricerFactory.WARFRAME_MARKET_PRICES);
+        defaultPricers.add(PricerFactory.DUCATS);
         this.settings = new Settings(this.resolutionFile.getFromString("1920x1080"), defaultPricers, -1, 5.0f);
     }
 
