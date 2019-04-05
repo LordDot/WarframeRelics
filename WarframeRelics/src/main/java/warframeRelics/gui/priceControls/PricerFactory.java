@@ -4,8 +4,8 @@ import warframeRelics.dataBase.IDataBase;
 import warframeRelics.pricing.WarframeMarket;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PricerFactory {
@@ -26,7 +26,7 @@ public class PricerFactory {
         pricers.put(WARFRAME_MARKET_STATISTICS, new WarframeMarketStatisticsWrapper(WARFRAME_MARKET_STATISTICS, warframeMarket));
     }
 
-    public Collection<Pricer> getAllPricers() {
+    public List<Pricer> getAllPricers() {
         ArrayList<Pricer> ret = new ArrayList<>(2);
         ret.add(getNamePricer());
         ret.add(getDucatPricer());

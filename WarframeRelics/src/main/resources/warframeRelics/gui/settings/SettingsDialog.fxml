@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.SpinnerValueFactory.DoubleSpinnerValueFactory?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-
-<AnchorPane prefHeight="500.0" prefWidth="220.0" xmlns="http://javafx.com/javafx/8.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<AnchorPane prefHeight="500.0" prefWidth="220.0" xmlns="http://javafx.com/javafx/10.0.1"
+            xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <StackPane fx:id="stackPane" prefHeight="434.0" prefWidth="220.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
             <children>
@@ -35,13 +29,14 @@
                                     </children>
                                 </VBox>
                                 <Separator prefWidth="200.0" />
-                                <VBox fx:id="pricerVBox" spacing="5.0">
+                                <VBox spacing="5.0">
                                     <children>
                                         <Label text="Displayed Values">
                                             <font>
                                                 <Font size="16.0" />
                                             </font>
                                         </Label>
+                                        <VBox fx:id="pricerVBox" spacing="5.0"/>
                                     </children>
                                 </VBox>
                                 <Separator prefWidth="200.0" />

@@ -148,11 +148,28 @@ public class SettingsDialog implements Initializable, NativeKeyListener {
         return settings;
     }
 
-    private void setSelectedPricers(List<String> pricerNames) {
-        for (PricerDisplayer dp : pricerDisplayers) {
-            if (pricerNames.contains(dp.getPricer().getId())) {
-                dp.setSelected(true);
-            }
+    private void setSelectedPricers(List<String> pricerIds) {
+        pricerVBox.getChildren().clear();
+        pricerDisplayers.clear();
+        List<Pricer> pricers = pricerFactory.getAllPricers();
+        for (String id : pricerIds) {
+            Pricer p = pricerFactory.get(id);
+            pricers.remove(p);
+
+            PricerDisplayer dp = new PricerDisplayer();
+            dp.setPricer(p);
+            dp.setSelected(true);
+            registerDragEvents(dp);
+            pricerVBox.getChildren().add(dp);
+            pricerDisplayers.add(dp);
+        }
+
+        for (Pricer p : pricers) {
+            PricerDisplayer dp = new PricerDisplayer();
+            dp.setPricer(p);
+            registerDragEvents(dp);
+            pricerVBox.getChildren().add(dp);
+            pricerDisplayers.add(dp);
         }
     }
 
