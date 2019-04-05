@@ -1,55 +1,39 @@
 package warframeRelics.gui.priceControls;
 
+import org.reflections.Reflections;
 import warframeRelics.dataBase.IDataBase;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 public class PricerFactory {
 
-    public static final String NAME = "name";
-    public static final String DUCATS = "ducats";
-    public static final String WARFRAME_MARKET_PRICES = "warframeMarketPrices";
-    public static final String WARFRAME_MARKET_STATISTICS = "warframeMarketStatistics";
+    public static final String NAME = "warframeRelics.gui.priceControls.NamePricer";
+    public static final String DUCATS = "warframeRelics.gui.priceControls.DucatsPricer";
 
     private Map<String, Pricer> pricers;
 
     public PricerFactory(IDataBase database) {
         pricers = new HashMap<>();
-        pricers.put(NAME, new NamePricer(NAME));
-        pricers.put(DUCATS, new DucatsPricer(DUCATS));
-        pricers.put(WARFRAME_MARKET_PRICES, new WarframeMarketPriceWrapper(WARFRAME_MARKET_PRICES));
-        pricers.put(WARFRAME_MARKET_STATISTICS, new WarframeMarketStatisticsWrapper(WARFRAME_MARKET_STATISTICS));
+        Set<Class<? extends Pricer>> subTypes = new Reflections().getSubTypesOf(Pricer.class);
+        for (Class<? extends Pricer> c : subTypes) {
+            try {
+                Constructor<? extends Pricer> declaredConstructor = c.getDeclaredConstructor(String.class);
+                String name = c.getCanonicalName();
+                pricers.put(name, declaredConstructor.newInstance(name));
+            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                //ignore
+            }
+            ;
+        }
     }
 
     public List<Pricer> getAllPricers() {
-        ArrayList<Pricer> ret = new ArrayList<>(2);
-        ret.add(getNamePricer());
-        ret.add(getDucatPricer());
-        ret.add(getWarframeMarketPricePricer());
-        ret.add(getWarframeMarketStatisticsPricer());
-        return ret;
+        return new ArrayList<>(pricers.values());
     }
 
-    public Pricer getNamePricer() {
-        return pricers.get(NAME);
-    }
-
-    public Pricer getWarframeMarketPricePricer() {
-        return pricers.get(WARFRAME_MARKET_PRICES);
-    }
-
-    public Pricer getWarframeMarketStatisticsPricer() {
-        return pricers.get(WARFRAME_MARKET_STATISTICS);
-    }
-
-    public Pricer getDucatPricer() {
-        return pricers.get(DUCATS);
-    }
-
-    public Pricer get(String name) {
-        return pricers.get(name);
+    public Pricer get(String id) {
+        return pricers.get(id);
     }
 }
