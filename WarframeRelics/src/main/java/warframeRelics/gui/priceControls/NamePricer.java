@@ -1,11 +1,9 @@
 package warframeRelics.gui.priceControls;
 
-import warframeRelics.dataBase.IDataBase;
-
 public class NamePricer extends Pricer {
 
 
-    NamePricer(String id, IDataBase database) {
+    NamePricer(String id) {
         super(id);
     }
 

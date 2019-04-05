@@ -10,9 +10,9 @@ import warframeRelics.pricing.WarframeMarket;
 public class WarframeMarketStatisticsWrapper extends Pricer {
     private WarframeMarket pricer;
 
-    public WarframeMarketStatisticsWrapper(String id, WarframeMarket pricer) {
+    public WarframeMarketStatisticsWrapper(String id) {
         super(id);
-        this.pricer = pricer;
+        this.pricer = new WarframeMarket();
     }
 
     @Override

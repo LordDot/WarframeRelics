@@ -1,7 +1,6 @@
 package warframeRelics.gui.priceControls;
 
 import warframeRelics.dataBase.IDataBase;
-import warframeRelics.pricing.WarframeMarket;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,11 +18,10 @@ public class PricerFactory {
 
     public PricerFactory(IDataBase database) {
         pricers = new HashMap<>();
-        WarframeMarket warframeMarket = new WarframeMarket();
-        pricers.put(NAME, new NamePricer(NAME, database));
+        pricers.put(NAME, new NamePricer(NAME));
         pricers.put(DUCATS, new DucatsPricer(DUCATS));
-        pricers.put(WARFRAME_MARKET_PRICES, new WarframeMarketPriceWrapper(WARFRAME_MARKET_PRICES, warframeMarket));
-        pricers.put(WARFRAME_MARKET_STATISTICS, new WarframeMarketStatisticsWrapper(WARFRAME_MARKET_STATISTICS, warframeMarket));
+        pricers.put(WARFRAME_MARKET_PRICES, new WarframeMarketPriceWrapper(WARFRAME_MARKET_PRICES));
+        pricers.put(WARFRAME_MARKET_STATISTICS, new WarframeMarketStatisticsWrapper(WARFRAME_MARKET_STATISTICS));
     }
 
     public List<Pricer> getAllPricers() {
